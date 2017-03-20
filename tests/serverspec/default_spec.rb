@@ -19,6 +19,8 @@ when "freebsd"
   config = "/usr/local/etc/mosquitto/mosquitto.conf"
   db_dir = "/var/db/mosquitto"
   default_group = "wheel"
+when "ubuntu"
+  group = "nogroup"
 end
 
 describe package(package) do
@@ -35,6 +37,10 @@ describe file(config) do
   its(:content) { should match(/^bind_address #{ Regexp.escape("10.0.2.15") }$/) }
   its(:content) { should match(/^port #{ ports.first }$/) }
   its(:content) { should match(/^log_dest syslog$/) }
+  its(:content) { should match(/^autosave_interval 1800$/) }
+  its(:content) { should match(/^persistence true$/) }
+  its(:content) { should match(/^persistence_location #{ Regexp.escape(db_dir) }\/$/) }
+  its(:content) { should match(/^persistence_file mosquitto\.db$/) }
 end
 
 describe file(db_dir) do
