@@ -18,7 +18,7 @@
       - epel-release
     redhat_repo:
       epel:
-        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version }}&arch={{ ansible_architecture }}"
+        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version | default('') }}&arch={{ ansible_architecture }}"
         gpgcheck: yes
         enabled: yes
         description: EPEL
