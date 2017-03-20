@@ -2,5 +2,5 @@
 
 - name: Install mosquitto
   pkgng:
-    name: mosquitto
+    name: "{{ mosquitto_package }}"
     state: present

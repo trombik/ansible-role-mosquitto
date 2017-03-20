@@ -5,6 +5,8 @@
 
 - include: "install-{{ ansible_os_family }}.yml"
 
+- include: "configure-{{ ansible_os_family }}.yml"
+
 - name: Create log directory
   file:
     path: "{{ mosquitto_log_dir }}"
@@ -27,7 +29,6 @@
   template:
     src: mosquitto.conf.j2
     dest: "{{ mosquitto_conf_file }}"
-    validate: echo %s
   notify: Restart mosquitto
 
 - name: Start mosquitto

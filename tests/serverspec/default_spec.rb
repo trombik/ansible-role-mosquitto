@@ -1,19 +1,24 @@
-require 'spec_helper'
-require 'serverspec'
+require "spec_helper"
+require "serverspec"
 
-package = 'mosquitto'
-service = 'mosquitto'
-config  = '/etc/mosquitto/mosquitto.conf'
-user    = 'mosquitto'
-group   = 'mosquitto'
-ports   = [ PORTS ]
-log_dir = '/var/log/mosquitto'
-db_dir  = '/var/lib/mosquitto'
+package = "mosquitto"
+service = "mosquitto"
+config  = "/etc/mosquitto/mosquitto.conf"
+user    = "mosquitto"
+group   = "mosquitto"
+ports   = [ 1883 ]
+db_dir  = "/var/lib/mosquitto"
+pid_file = "/var/run/mosquitto.pid"
+default_user = "root"
+default_group = "root"
 
 case os[:family]
-when 'freebsd'
-  config = '/usr/local/etc/mosquitto.conf'
-  db_dir = '/var/db/mosquitto'
+when "freebsd"
+  user = "nobody"
+  group = "nobody"
+  config = "/usr/local/etc/mosquitto/mosquitto.conf"
+  db_dir = "/var/db/mosquitto"
+  default_group = "wheel"
 end
 
 describe package(package) do
@@ -22,14 +27,14 @@ end
 
 describe file(config) do
   it { should be_file }
-  its(:content) { should match Regexp.escape('mosquitto') }
-end
-
-describe file(log_dir) do
-  it { should exist }
-  it { should be_mode 755 }
-  it { should be_owned_by user }
-  it { should be_grouped_into group }
+  it { should be_mode 644 }
+  it { should be_owned_by default_user }
+  it { should be_grouped_into default_group }
+  its(:content) { should match(/^user #{user}$/) }
+  its(:content) { should match(/^pid_file #{pid_file}$/) }
+  its(:content) { should match(/^bind_address #{ Regexp.escape("10.0.2.15") }$/) }
+  its(:content) { should match(/^port #{ ports.first }$/) }
+  its(:content) { should match(/^log_dest syslog$/) }
 end
 
 describe file(db_dir) do
@@ -40,9 +45,13 @@ describe file(db_dir) do
 end
 
 case os[:family]
-when 'freebsd'
-  describe file('/etc/rc.conf.d/mosquitto') do
+when "freebsd"
+  describe file("/etc/rc.conf.d/mosquitto") do
     it { should be_file }
+    it { should be_mode 644 }
+    it { should be_owned_by default_user }
+    it { should be_grouped_into default_group }
+    its(:content) { should match(/^mosquitto_flags=""$/) }
   end
 end
 

@@ -4,3 +4,9 @@
   service:
     name: mosquitto
     state: restarted
+
+- name: Wait for mosquitto to listen in handler
+  wait_for:
+    host: "{% if mosquitto_bind_address | length > 0 %}mosquitto_bind_address }}{% else %}{{ localhost }}{% endif %}"
+    port: "{{ mosquitto_port }}"
+    timeout: 300

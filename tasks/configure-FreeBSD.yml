@@ -1,0 +1,13 @@
+---
+
+- name: Create rc.conf.d
+  file:
+    path: /etc/rc.conf.d
+    mode: 0755
+    state: directory
+
+- name: Create rc.conf fragment
+  template:
+    src: mosquitto_rcd.j2
+    dest: "/etc/rc.conf.d/{{ mosquitto_package }}"
+    mode: 0644

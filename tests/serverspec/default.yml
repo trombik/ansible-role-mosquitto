@@ -2,4 +2,9 @@
   roles:
     - ansible-role-mosquitto
   vars:
-    mosquitto_config: ""
+    mosquitto_config:
+      - "user {{ mosquitto_user }}"
+      - "pid_file {{ mosquitto_pid_file }}"
+      - "bind_address {{ ansible_em0.ipv4[0].address }}"
+      - "port {{ mosquitto_port }}"
+      - "log_dest syslog"
