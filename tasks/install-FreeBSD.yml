@@ -1,0 +1,6 @@
+---
+
+- name: Install mosquitto
+  pkgng:
+    name: mosquitto
+    state: present

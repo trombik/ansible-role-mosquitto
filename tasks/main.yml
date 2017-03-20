@@ -1,0 +1,37 @@
+---
+# tasks file for ansible-role-mosquitto
+
+- include_vars: "{{ ansible_os_family }}.yml"
+
+- include: "install-{{ ansible_os_family }}.yml"
+
+- name: Create log directory
+  file:
+    path: "{{ mosquitto_log_dir }}"
+    mode: 0755
+    owner: "{{ mosquitto_user }}"
+    group: "{{ mosquitto_group }}"
+    state: directory
+  notify: Restart mosquitto
+
+- name: Create db directory
+  file:
+    path: "{{ mosquitto_db_dir }}"
+    mode: 0755
+    owner: "{{ mosquitto_user }}"
+    group: "{{ mosquitto_group }}"
+    state: directory
+  notify: Restart mosquitto
+
+- name: Create mosquitto.conf
+  template:
+    src: mosquitto.conf.j2
+    dest: "{{ mosquitto_conf_file }}"
+    validate: echo %s
+  notify: Restart mosquitto
+
+- name: Start mosquitto
+  service:
+    name: "{{ mosquitto_service }}"
+    enabled: true
+    state: started

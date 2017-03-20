@@ -1,0 +1,8 @@
+mosquitto_user: mosquitto
+mosquitto_group: mosquitto
+mosquitto_log_dir: /var/log/mosquitto
+mosquitto_db_dir: "{{ __mosquitto_db_dir }}"
+mosquitto_service: mosquitto
+mosquitto_conf_dir: "{{ __mosquitto_conf_dir }}"
+mosquitto_conf_file: "{{ __mosquitto_conf_dir }}/mosquitto.conf"
+mosquitto_flags: ""
