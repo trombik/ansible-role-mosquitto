@@ -1,0 +1,6 @@
+---
+
+- name: Install mosquitto
+  yum:
+    name: "{{ mosquitto_package }}"
+    state: present
