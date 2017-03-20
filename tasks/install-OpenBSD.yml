@@ -1,0 +1,6 @@
+---
+
+- name: Install mosquitto
+  openbsd_pkg:
+    name: "{{ mosquitto_package }}"
+    state: present
