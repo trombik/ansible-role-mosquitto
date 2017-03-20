@@ -10,4 +10,5 @@
   template:
     src: mosquitto_rcd.j2
     dest: "/etc/rc.conf.d/{{ mosquitto_package }}"
+    validate: sh -n %s
     mode: 0644
