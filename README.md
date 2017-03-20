@@ -1,6 +1,6 @@
 # ansible-role-mosquitto
 
-A brief description of the role goes here.
+Configure mosquitto MQTT server
 
 # Requirements
 
@@ -8,17 +8,90 @@ None
 
 # Role Variables
 
-| variable | description | default |
+| Variable | Description | Default |
 |----------|-------------|---------|
+| `mosquitto_user` | mosquitto user name | `{{ __mosquitto_user }}` |
+| `mosquitto_group` | mosquitto group | `{{ __mosquitto_group }}` |
+| `mosquitto_log_dir` | log directory (you have to set `log_dest` to file) | `/var/log/mosquitto` |
+| `mosquitto_db_dir` | `persistence_location` | `{{ __mosquitto_db_dir }}` |
+| `mosquitto_service` | service name of mosquitto | `mosquitto` |
+| `mosquitto_conf_dir` | directory of configuration files | `{{ __mosquitto_conf_dir }}` |
+| `mosquitto_conf_file` | path to `mosquitto.conf` | `{{ __mosquitto_conf_dir }}/mosquitto.conf` |
+| `mosquitto_package` | | `mosquitto` |
+| `mosquitto_pid_file` | path to PID file | `/var/run/mosquitto.pid` |
+| `mosquitto_flags` | flags to pass start up script (currently, FreeBSD only) | `""` |
+| `mosquitto_port` | port to listen on | `1883` |
+| `mosquitto_bind_address` | bind address | `""` |
+| `mosquitto_config` | array of settings | `[]` |
 
+
+## Debian
+
+| Variable | Default |
+|----------|---------|
+| `__mosquitto_user` | `mosquitto` |
+| `__mosquitto_group` | `nogroup` |
+| `__mosquitto_db_dir` | `/var/lib/mosquitto` |
+| `__mosquitto_conf_dir` | `/etc/mosquitto` |
+
+## FreeBSD
+
+| Variable | Default |
+|----------|---------|
+| `__mosquitto_user` | `nobody` |
+| `__mosquitto_group` | `nobody` |
+| `__mosquitto_db_dir` | `/var/db/mosquitto` |
+| `__mosquitto_conf_dir` | `/usr/local/etc/mosquitto` |
+
+## OpenBSD
+
+| Variable | Default |
+|----------|---------|
+| `__mosquitto_user` | `_mosquitto` |
+| `__mosquitto_group` | `_mosquitto` |
+| `__mosquitto_db_dir` | `/var/db/mosquitto` |
+| `__mosquitto_conf_dir` | `/etc/mosquitto` |
+
+## RedHat
+
+| Variable | Default |
+|----------|---------|
+| `__mosquitto_user` | `mosquitto` |
+| `__mosquitto_group` | `mosquitto` |
+| `__mosquitto_db_dir` | `/var/lib/mosquitto` |
+| `__mosquitto_conf_dir` | `/etc/mosquitto` |
 
 # Dependencies
 
-None
+- `reallyenglish.redhat-repo` when `ansible_os_family` is RedHat
 
 # Example Playbook
 
 ```yaml
+- hosts: localhost
+  roles:
+    - reallyenglish.redhat-repo
+    - ansible-role-mosquitto
+  vars:
+    mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
+    mosquitto_config:
+      - "user {{ mosquitto_user }}"
+      - "pid_file {{ mosquitto_pid_file }}"
+      - "bind_address {{ mosquitto_bind_address }}"
+      - "port {{ mosquitto_port }}"
+      - "log_dest syslog"
+      - "autosave_interval 1800"
+      - "persistence true"
+      - "persistence_location {{ mosquitto_db_dir }}/"
+      - "persistence_file mosquitto.db"
+    redhat_repo_extra_packages:
+      - epel-release
+    redhat_repo:
+      epel:
+        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version }}&arch={{ ansible_architecture }}"
+        gpgcheck: yes
+        enabled: yes
+        description: EPEL
 ```
 
 # License
