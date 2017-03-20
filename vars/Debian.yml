@@ -1,0 +1,4 @@
+__mosquitto_user: mosquitto
+__mosquitto_group: nogroup
+__mosquitto_db_dir: /var/lib/mosquitto
+__mosquitto_conf_dir: /etc/mosquitto

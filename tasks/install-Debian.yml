@@ -1,0 +1,6 @@
+---
+
+- name: Install mosquitto
+  apt:
+    name: "{{ mosquitto_package }}"
+    state: present
