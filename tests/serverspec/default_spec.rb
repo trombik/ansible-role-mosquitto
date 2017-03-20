@@ -21,6 +21,10 @@ when "freebsd"
   default_group = "wheel"
 when "ubuntu"
   group = "nogroup"
+when "openbsd"
+  user = "_mosquitto"
+  group = "_mosquitto"
+  db_dir = "/var/db/mosquitto"
 end
 
 describe package(package) do
@@ -29,9 +33,9 @@ end
 
 describe file(config) do
   it { should be_file }
-  it { should be_mode 644 }
+  it { should be_mode 640 }
   it { should be_owned_by default_user }
-  it { should be_grouped_into default_group }
+  it { should be_grouped_into group }
   its(:content) { should match(/^user #{user}$/) }
   its(:content) { should match(/^pid_file #{pid_file}$/) }
   its(:content) { should match(/^bind_address #{ Regexp.escape("10.0.2.15") }$/) }

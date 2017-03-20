@@ -27,6 +27,9 @@
 
 - name: Create mosquitto.conf
   template:
+    owner: root
+    group: "{{ mosquitto_group }}"
+    mode: 0640
     src: mosquitto.conf.j2
     dest: "{{ mosquitto_conf_file }}"
   notify: Restart mosquitto
