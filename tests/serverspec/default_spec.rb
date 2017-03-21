@@ -31,6 +31,13 @@ describe package(package) do
   it { should be_installed }
 end 
 
+case os[:family]
+when "ubuntu"
+  describe package("mosquitto-clients") do
+    it { should be_installed }
+  end
+end
+
 describe file(config) do
   it { should be_file }
   it { should be_mode 640 }

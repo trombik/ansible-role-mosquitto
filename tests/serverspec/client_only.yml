@@ -12,3 +12,5 @@
         gpgcheck: yes
         enabled: yes
         description: EPEL
+    apt_repo_to_add:
+      - ppa:mosquitto-dev/mosquitto-ppa
