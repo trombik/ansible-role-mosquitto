@@ -23,4 +23,5 @@ galaxy_info:
   galaxy_tags:
     - mqtt
 dependencies:
+  - { role: reallyenglish.apt-repo, when: ansible_os_family == "Debian" }
   - { role: reallyenglish.redhat-repo, when: ansible_os_family == "RedHat" }

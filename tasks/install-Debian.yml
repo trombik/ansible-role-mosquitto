@@ -4,3 +4,10 @@
   apt:
     name: "{{ mosquitto_package }}"
     state: present
+  when:
+    - mosquitto_server
+
+- name: Install mosquitto-clients
+  apt:
+    name: mosquitto-clients
+    state: present
