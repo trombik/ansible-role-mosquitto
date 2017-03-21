@@ -10,5 +10,6 @@ mosquitto_pid_file: /var/run/mosquitto.pid
 mosquitto_flags: ""
 mosquitto_port: 1883
 mosquitto_bind_address: ""
+mosquitto_server: yes
 
 mosquitto_config: []

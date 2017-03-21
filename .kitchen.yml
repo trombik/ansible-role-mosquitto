@@ -68,3 +68,11 @@ suites:
     verifier:
       name: shell
       command: rspec -c -f d -I tests/serverspec tests/serverspec/default_spec.rb
+
+  - name: client_only
+    provisioner:
+      name: ansible_playbook
+      playbook: tests/serverspec/client_only.yml
+    verifier:
+      name: shell
+      command: rspec -c -f d -I tests/serverspec tests/serverspec/client_only_spec.rb

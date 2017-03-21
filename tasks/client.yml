@@ -1,0 +1,6 @@
+---
+- name: Ensure mosquitto server is disabled
+  service:
+    name: "{{ mosquitto_service }}"
+    enabled: false
+    state: stopped

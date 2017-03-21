@@ -1,6 +1,6 @@
 # ansible-role-mosquitto
 
-Configure mosquitto MQTT server
+Configure mosquitto MQTT server.
 
 # Requirements
 
@@ -23,6 +23,7 @@ None
 | `mosquitto_port` | port to listen on | `1883` |
 | `mosquitto_bind_address` | bind address | `""` |
 | `mosquitto_config` | array of settings | `[]` |
+| `mosquitto_server` | enable and configure `mosquitto` server if yes (or any `True` value). Set `mosquitto_server` to `no` (or `False` value) when you do not want to run `mosquitto` server. | `yes` |
 
 
 ## Debian
