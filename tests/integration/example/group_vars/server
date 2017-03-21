@@ -1,0 +1,10 @@
+mosquitto_bind_address: ""
+mosquitto_config:
+  - "user {{ mosquitto_user }}"
+  - "pid_file {{ mosquitto_pid_file }}"
+  - "port {{ mosquitto_port }}"
+  - "log_dest syslog"
+  - "autosave_interval 1800"
+  - "persistence true"
+  - "persistence_location {{ mosquitto_db_dir }}/"
+  - "persistence_file mosquitto.db"
