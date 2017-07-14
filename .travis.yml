@@ -36,7 +36,6 @@ install:
   - sudo apt-get install -f
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
-  - vagrant init
 
   # Install ansible
   - pip install ansible
@@ -94,6 +93,9 @@ script:
 
   # run rubocop
   - bundle exec rubocop
+
+  # run kitchen
+  - bundle exec kitchen test
 
   # run the QA test
   - qansible qa
