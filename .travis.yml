@@ -26,15 +26,11 @@ addons:
     - libxml2-dev
     - libvirt-dev
     - zlib1g-dev
-    - ruby-dev
+    - ruby2.3
+    - ruby2.3-dev
     - vagrant
 
 install:
-  # use recent ruby, instead of default ruby 1.9
-  - rvm install ruby-2.1.10
-  - rvm use 2.1.10
-  - gem install log4r
-
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
 
@@ -52,6 +48,10 @@ script:
   - vagrant plugin install vagrant-libvirt
   # See if the repo is private
   - if curl --silent --output /dev/null --dump-header - "https://github.com/${TRAVIS_REPO_SLUG}" | grep "Status:[[:space:]]*404"; then touch .private_repo; fi
+
+  # use recent ruby, instead of default ruby 1.9
+  - rvm install ruby-2.1.10
+  - rvm use 2.1.10
 
   # Download depended roles
   - if [ -f requirements.yml ]; then ansible-galaxy install -r requirements.yml -p extra_roles; fi
