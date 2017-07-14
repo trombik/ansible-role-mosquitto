@@ -3,8 +3,23 @@
 - name: Restart mosquitto
   service:
     name: mosquitto
-    state: restarted
-  notify: Wait for mosquitto to listen in handler
+    state: stopped
+  notify:
+    - Wait for mosquitto to stop listening in handler
+    - Start mosquitto in handler
+    - Wait for mosquitto to listen in handler
+
+- name: Wait for mosquitto to stop listening in handler
+  wait_for:
+    host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
+    port: "{{ mosquitto_port }}"
+    timeout: 300
+    state: stopped
+
+- name: Start mosquitto in handler
+  service:
+    name: mosquitto
+    state: started
 
 - name: Wait for mosquitto to listen in handler
   # XXX the server does not validate upon startup. even if the file is not
