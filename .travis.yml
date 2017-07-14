@@ -28,10 +28,10 @@ addons:
     - zlib1g-dev
     - ruby
     - ruby-dev
-    - ruby-log4r
     - vagrant
 
 install:
+  - gem install ruby-log4r
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
 
