@@ -26,8 +26,9 @@ addons:
     - libxml2-dev
     - libvirt-dev
     - zlib1g-dev
-    - ruby2.3
-    - ruby2.3-dev
+    - ruby
+    - ruby-dev
+    - ruby-log4r
     - vagrant
 
 install:
