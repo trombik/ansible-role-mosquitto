@@ -33,6 +33,7 @@ install:
   # use recent ruby, instead of default ruby 1.9
   - rvm install ruby-2.1.10
   - rvm use 2.1.10
+  - gem install log4r
 
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
