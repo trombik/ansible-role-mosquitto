@@ -6,7 +6,7 @@ service = "mosquitto"
 config  = "/etc/mosquitto/mosquitto.conf"
 user    = "mosquitto"
 group   = "mosquitto"
-ports   = [ 1883 ]
+ports   = [1883]
 db_dir  = "/var/lib/mosquitto"
 pid_file = "/var/run/mosquitto.pid"
 default_user = "root"
@@ -29,7 +29,7 @@ end
 
 describe package(package) do
   it { should be_installed }
-end 
+end
 
 case os[:family]
 when "ubuntu"
@@ -50,7 +50,7 @@ describe file(config) do
   its(:content) { should match(/^log_dest syslog$/) }
   its(:content) { should match(/^autosave_interval 1800$/) }
   its(:content) { should match(/^persistence true$/) }
-  its(:content) { should match(/^persistence_location #{ Regexp.escape(db_dir) }\/$/) }
+  its(:content) { should match(%r{^persistence_location #{Regexp.escape(db_dir)}\/$}) }
   its(:content) { should match(/^persistence_file mosquitto\.db$/) }
 end
 
