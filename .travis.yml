@@ -3,7 +3,7 @@ language: python
 python: "2.7"
 
 # Use the new container infrastructure
-sudo: false
+sudo: true
 
 # Install ansible
 addons:
@@ -28,12 +28,15 @@ addons:
     - zlib1g-dev
     - ruby
     - ruby-dev
-    - vagrant
 
 install:
   - rvm use system
+  - wget https://releases.hashicorp.com/vagrant/1.9.7/vagrant_1.9.7_x86_64.deb
+  - sudo dpkg -i vagrant_1.9.7_x86_64.deb
+  - sudo apt-get install -f
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
+  - vagrant init
 
   # Install ansible
   - pip install ansible
