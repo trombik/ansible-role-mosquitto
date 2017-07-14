@@ -36,6 +36,7 @@ install:
   - sudo apt-get install -f
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
+  - sudo chmod 777 /var/run/libvirt/libvirt-sock
 
   # Install ansible
   - pip install ansible
