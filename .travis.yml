@@ -31,7 +31,7 @@ addons:
     - vagrant
 
 install:
-  - gem install log4r
+  - rvm use system
   # install vagrant-libvirt
   - vagrant plugin install vagrant-libvirt
 
