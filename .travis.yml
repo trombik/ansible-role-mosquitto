@@ -11,8 +11,28 @@ addons:
     packages:
     - python-pip
     - curl
+    # depends
+    - debhelper
+    - gem2deb
+    - debhelper
+    - pkg-config
+    - rake
+    # end of depends
+    - qemu
+    - libvirt-bin
+    - ebtables
+    - dnsmasq
+    - libxslt-dev
+    - libxml2-dev
+    - libvirt-dev
+    - zlib1g-dev
+    - ruby-dev
+    - vagrant
 
 install:
+  # install vagrant-libvirt
+  - vagrant plugin install vagrant-libvirt
+
   # Install ansible
   - pip install ansible
 
@@ -24,10 +44,6 @@ install:
   - printf '[defaults]\nroles_path=../:extra_roles' >ansible.cfg
 
 script:
-  - sudo apt-get build-dep vagrant ruby-libvirt
-  - sudo apt-get install qemu libvirt-bin ebtables dnsmasq
-  - sudo apt-get install libxslt-dev libxml2-dev libvirt-dev zlib1g-dev ruby-dev
-  - sudo apt-get install vagrant
   - vagrant plugin install vagrant-libvirt
   # See if the repo is private
   - if curl --silent --output /dev/null --dump-header - "https://github.com/${TRAVIS_REPO_SLUG}" | grep "Status:[[:space:]]*404"; then touch .private_repo; fi
