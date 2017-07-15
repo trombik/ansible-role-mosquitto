@@ -96,7 +96,7 @@ script:
   - bundle exec rubocop
 
   # run kitchen
-  - bundle exec kitchen test
+  - env VAGRANT_LOG=debug bundle exec kitchen test
 
   # run the QA test
   - qansible qa
