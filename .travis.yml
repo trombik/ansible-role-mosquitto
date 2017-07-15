@@ -3,7 +3,7 @@ language: python
 python: "2.7"
 
 # Use the new container infrastructure
-sudo: false
+sudo: true
 
 # Install ansible
 addons:
@@ -11,8 +11,33 @@ addons:
     packages:
     - python-pip
     - curl
+    # depends
+    - debhelper
+    - gem2deb
+    - debhelper
+    - pkg-config
+    - rake
+    # end of depends
+    - qemu
+    - libvirt-bin
+    - ebtables
+    - dnsmasq
+    - libxslt-dev
+    - libxml2-dev
+    - libvirt-dev
+    - zlib1g-dev
+    - ruby
+    - ruby-dev
 
 install:
+  - rvm use system
+  - wget https://releases.hashicorp.com/vagrant/1.9.7/vagrant_1.9.7_x86_64.deb
+  - sudo dpkg -i vagrant_1.9.7_x86_64.deb
+  - sudo apt-get install -f
+  # install vagrant-libvirt
+  - vagrant plugin install vagrant-libvirt
+  - sudo chmod 777 /var/run/libvirt/libvirt-sock
+
   # Install ansible
   - pip install ansible
 
@@ -24,8 +49,13 @@ install:
   - printf '[defaults]\nroles_path=../:extra_roles' >ansible.cfg
 
 script:
+  - vagrant plugin install vagrant-libvirt
   # See if the repo is private
   - if curl --silent --output /dev/null --dump-header - "https://github.com/${TRAVIS_REPO_SLUG}" | grep "Status:[[:space:]]*404"; then touch .private_repo; fi
+
+  # use recent ruby, instead of default ruby 1.9
+  - rvm install ruby-2.1.10
+  - rvm use 2.1.10
 
   # Download depended roles
   - if [ -f requirements.yml ]; then ansible-galaxy install -r requirements.yml -p extra_roles; fi
@@ -38,10 +68,6 @@ script:
   # CI environment. Skip syntax check when it is a private repo.
   #
   - "if [ ! -f .private_repo ]; then ansible-playbook tests/travisci/tests.yml -i tests/travisci/inventory --syntax-check; fi"
-
-  # use recent ruby, instead of default ruby 1.9
-  - rvm install ruby-2.1.10
-  - rvm use 2.1.10
 
   # download the QA scripts
   - git clone https://github.com/trombik/qansible.git
@@ -68,6 +94,9 @@ script:
 
   # run rubocop
   - bundle exec rubocop
+
+  # run kitchen
+  - env VAGRANT_LOG=debug bundle exec kitchen test
 
   # run the QA test
   - qansible qa
