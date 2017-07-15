@@ -26,6 +26,7 @@ provisioner:
 platforms:
   - name: freebsd-10.3-amd64
     driver:
+      driver: qemu
       box: trombik/test-freebsd-10.3-amd64
     driver_config:
       ssh:
