@@ -1,5 +1,5 @@
 ---
 
-- name: reallyenglish.redhat-repo
+- name: trombik.redhat-repo
 
-- name: reallyenglish.apt-repo
+- name: trombik.apt-repo

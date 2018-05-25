@@ -1,7 +1,16 @@
 - hosts: localhost
   roles:
-    - reallyenglish.redhat-repo
-    - ansible-role-mosquitto
+    - name: trombik.redhat-repo
+      when:
+        - ansible_os_family == 'RedHat'
+    - name: trombik.apt-repo
+      when:
+        - ansible_distribution == 'Ubuntu'
+        # XXX replace version_compare with `is version` when OpenBSD boxen get
+        # updated to ansible 2.5.x
+        # - ansible_distribution_version is version('18.04', '<')
+        - ansible_distribution_version | version_compare('18.04', '<')
+    - name: ansible-role-mosquitto
   vars:
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
     mosquitto_config:
@@ -16,11 +25,5 @@
       - "persistence_file mosquitto.db"
     redhat_repo_extra_packages:
       - epel-release
-    redhat_repo:
-      epel:
-        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version | default('') }}&arch={{ ansible_architecture }}"
-        gpgcheck: yes
-        enabled: yes
-        description: EPEL
     apt_repo_to_add:
       - ppa:mosquitto-dev/mosquitto-ppa

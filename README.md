@@ -64,15 +64,24 @@ None
 
 # Dependencies
 
-- `reallyenglish.redhat-repo` when `ansible_os_family` is RedHat
+None
 
 # Example Playbook
 
 ```yaml
 - hosts: localhost
   roles:
-    - reallyenglish.redhat-repo
-    - ansible-role-mosquitto
+    - name: trombik.redhat-repo
+      when:
+        - ansible_os_family == 'RedHat'
+    - name: trombik.apt-repo
+      when:
+        - ansible_distribution == 'Ubuntu'
+        # XXX replace version_compare with `is version` when OpenBSD boxen get
+        # updated to ansible 2.5.x
+        # - ansible_distribution_version is version('18.04', '<')
+        - ansible_distribution_version | version_compare('18.04', '<')
+    - name: ansible-role-mosquitto
   vars:
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
     mosquitto_config:
@@ -87,18 +96,14 @@ None
       - "persistence_file mosquitto.db"
     redhat_repo_extra_packages:
       - epel-release
-    redhat_repo:
-      epel:
-        mirrorlist: "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version }}&arch={{ ansible_architecture }}"
-        gpgcheck: yes
-        enabled: yes
-        description: EPEL
+    apt_repo_to_add:
+      - ppa:mosquitto-dev/mosquitto-ppa
 ```
 
 # License
 
 ```
-Copyright (c) 2017 Tomoyuki Sakurai <tomoyukis@reallyenglish.com>
+Copyright (c) 2017 Tomoyuki Sakurai <y@trombik.org>
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -115,6 +120,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 # Author Information
 
-Tomoyuki Sakurai <tomoyukis@reallyenglish.com>
+Tomoyuki Sakurai <y@trombik.org>
 
 This README was created by [qansible](https://github.com/trombik/qansible)
