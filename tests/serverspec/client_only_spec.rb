@@ -38,7 +38,11 @@ end
 %w[mosquitto_sub mosquitto_pub].each do |c|
   describe command("#{c} --help") do
     its(:exit_status) { should eq 1 }
-    its(:stderr) { should match(/^$/) }
+    if os[:family] == "ubuntu" && os[:release].to_f == 14.04
+      its(:stderr) { should eq "Error: Unknown option '--help'.\n" }
+    else
+      its(:stderr) { should match(/^$/) }
+    end
     its(:stdout) { should match(/^Usage: mosquitto_/) }
   end
 end
