@@ -22,7 +22,7 @@ None
 | `mosquitto_flags` | flags to pass start up script (currently, FreeBSD only) | `""` |
 | `mosquitto_port` | port to listen on | `1883` |
 | `mosquitto_bind_address` | bind address | `""` |
-| `mosquitto_config` | array of settings | `[]` |
+| `mosquitto_config` | array of settings | `""` |
 | `mosquitto_server` | enable and configure `mosquitto` server if yes (or any `True` value). Set `mosquitto_server` to `no` (or `False` value) when you do not want to run `mosquitto` server. | `yes` |
 
 
@@ -84,16 +84,16 @@ None
     - name: ansible-role-mosquitto
   vars:
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
-    mosquitto_config:
-      - "user {{ mosquitto_user }}"
-      - "pid_file {{ mosquitto_pid_file }}"
-      - "bind_address {{ mosquitto_bind_address }}"
-      - "port {{ mosquitto_port }}"
-      - "log_dest syslog"
-      - "autosave_interval 1800"
-      - "persistence true"
-      - "persistence_location {{ mosquitto_db_dir }}/"
-      - "persistence_file mosquitto.db"
+    mosquitto_config: |
+      user {{ mosquitto_user }}
+      pid_file {{ mosquitto_pid_file }}
+      bind_address {{ mosquitto_bind_address }}
+      port {{ mosquitto_port }}
+      log_dest syslog
+      autosave_interval 1800
+      persistence true
+      persistence_location {{ mosquitto_db_dir }}/
+      persistence_file mosquitto.db
     redhat_repo_extra_packages:
       - epel-release
     apt_repo_to_add:
