@@ -35,7 +35,7 @@ else
   end
 end
 
-%w(mosquitto_sub mosquitto_pub).each do |c|
+%w[mosquitto_sub mosquitto_pub].each do |c|
   describe command("#{c} --help") do
     its(:exit_status) { should eq 1 }
     its(:stderr) { should match(/^$/) }

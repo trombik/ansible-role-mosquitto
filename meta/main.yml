@@ -9,13 +9,16 @@ galaxy_info:
   - name: FreeBSD
     versions:
     - 10.3
+    - 11.3
   - name: OpenBSD
     versions:
-    - 6.0
+    - 6.2
+    - 6.3
   - name: Ubuntu
     versions:
     - trusty
     - xenial
+    - bionic
   - name: EL
     versions:
     - 7
@@ -23,5 +26,3 @@ galaxy_info:
   galaxy_tags:
     - mqtt
 dependencies:
-  - { role: reallyenglish.apt-repo, when: ansible_os_family == "Debian" }
-  - { role: reallyenglish.redhat-repo, when: ansible_os_family == "RedHat" }
