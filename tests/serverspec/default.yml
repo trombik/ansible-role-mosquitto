@@ -13,16 +13,16 @@
     - name: ansible-role-mosquitto
   vars:
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
-    mosquitto_config:
-      - "user {{ mosquitto_user }}"
-      - "pid_file {{ mosquitto_pid_file }}"
-      - "bind_address {{ mosquitto_bind_address }}"
-      - "port {{ mosquitto_port }}"
-      - "log_dest syslog"
-      - "autosave_interval 1800"
-      - "persistence true"
-      - "persistence_location {{ mosquitto_db_dir }}/"
-      - "persistence_file mosquitto.db"
+    mosquitto_config: |
+      user {{ mosquitto_user }}
+      pid_file {{ mosquitto_pid_file }}
+      bind_address {{ mosquitto_bind_address }}
+      port {{ mosquitto_port }}
+      log_dest syslog
+      autosave_interval 1800
+      persistence true
+      persistence_location {{ mosquitto_db_dir }}/
+      persistence_file mosquitto.db
     redhat_repo_extra_packages:
       - epel-release
     apt_repo_to_add:
