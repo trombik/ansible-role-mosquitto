@@ -6,10 +6,7 @@
     - name: trombik.apt-repo
       when:
         - ansible_distribution == 'Ubuntu'
-        # XXX replace version_compare with `is version` when OpenBSD boxen get
-        # updated to ansible 2.5.x
-        # - ansible_distribution_version is version('18.04', '<')
-        - ansible_distribution_version | version_compare('18.04', '<')
+        - ansible_distribution_version is version('18.04', '<')
     - name: ansible-role-mosquitto
   vars:
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
