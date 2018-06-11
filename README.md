@@ -22,9 +22,19 @@ None
 | `mosquitto_flags` | flags to pass start up script (currently, FreeBSD only) | `""` |
 | `mosquitto_port` | port to listen on | `1883` |
 | `mosquitto_bind_address` | bind address | `""` |
-| `mosquitto_config` | array of settings | `""` |
 | `mosquitto_server` | enable and configure `mosquitto` server if yes (or any `True` value). Set `mosquitto_server` to `no` (or `False` value) when you do not want to run `mosquitto` server. | `yes` |
+| `mosquitto_extra_packages` | list of dict of extra packages to install (see below) | `[]` |
+| `mosquitto_config` | array of settings | `""` |
 
+## `mosquitto_extra_packages`
+
+This is a list of dict. Each element represents a package to install (or
+uninstall).
+
+| Key | Description | Mandatory? |
+|-----|-------------|------------|
+| `name` | package name | yes |
+| `state` | either `present` or `absent`. `present` if omitted | no |
 
 ## Debian
 

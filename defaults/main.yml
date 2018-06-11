@@ -11,5 +11,6 @@ mosquitto_flags: ""
 mosquitto_port: 1883
 mosquitto_bind_address: ""
 mosquitto_server: yes
+mosquitto_extra_packages: []
 
 mosquitto_config: ""

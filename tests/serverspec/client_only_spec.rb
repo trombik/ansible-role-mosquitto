@@ -35,6 +35,16 @@ else
   end
 end
 
+["jq", "rsync"].each do |p|
+  describe package p do
+    it { should be_installed }
+  end
+end
+
+describe package "git" do
+  it { should_not be_installed }
+end
+
 %w[mosquitto_sub mosquitto_pub].each do |c|
   describe command("#{c} --help") do
     its(:exit_status) { should eq 1 }
