@@ -35,7 +35,7 @@ else
   end
 end
 
-["jq", "rsync"].each do |p|
+%w[jq rsync].each do |p|
   describe package p do
     it { should be_installed }
   end
