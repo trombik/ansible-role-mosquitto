@@ -11,3 +11,9 @@
   apt:
     name: mosquitto-clients
     state: present
+
+- name: Install or uninstall mosquitto_extra_packages
+  apt:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ mosquitto_extra_packages }}"

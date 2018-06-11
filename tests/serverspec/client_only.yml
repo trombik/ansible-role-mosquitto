@@ -14,3 +14,9 @@
       - epel-release
     apt_repo_to_add:
       - ppa:mosquitto-dev/mosquitto-ppa
+    mosquitto_extra_packages:
+      - name: jq
+      - name: rsync
+        state: present
+      - name: git
+        state: absent
