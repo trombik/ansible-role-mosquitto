@@ -1,0 +1,36 @@
+---
+- hosts: server
+  become: yes
+  become_method: sudo
+  environment:
+    http_proxy: "{{ http_proxy | default() }}"
+    https_proxy: "{{ https_proxy | default() }}"
+    no_proxy: "{{ no_proxy | default() }}"
+
+  pre_tasks:
+  roles:
+    - name: trombik.redhat-repo
+      when:
+        - ansible_os_family == 'RedHat'
+    - name: trombik.apt-repo
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version is version('18.04', '<')
+    - name: ansible-role-mosquitto
+  vars:
+    mosquitto_bind_address: "{{ ansible_all_ipv4_addresses[1] }}"
+    mosquitto_config: |
+      user {{ mosquitto_user }}
+      pid_file {{ mosquitto_pid_file }}
+      bind_address {{ mosquitto_bind_address }}
+      port {{ mosquitto_port }}
+      log_dest syslog
+      autosave_interval 1800
+      persistence true
+      persistence_location {{ mosquitto_db_dir }}/
+      persistence_file mosquitto.db
+      log_dest syslog
+    redhat_repo_extra_packages:
+      - epel-release
+    apt_repo_to_add:
+      - ppa:mosquitto-dev/mosquitto-ppa

@@ -1,0 +1,25 @@
+---
+- hosts: client
+  become: yes
+  become_method: sudo
+  environment:
+    http_proxy: "{{ http_proxy | default() }}"
+    https_proxy: "{{ https_proxy | default() }}"
+    no_proxy: "{{ no_proxy | default() }}"
+
+  pre_tasks:
+  roles:
+    - name: trombik.redhat-repo
+      when:
+        - ansible_os_family == 'RedHat'
+    - name: trombik.apt-repo
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version is version('18.04', '<')
+    - name: ansible-role-mosquitto
+  vars:
+    mosquitto_server: no
+    redhat_repo_extra_packages:
+      - epel-release
+    apt_repo_to_add:
+      - ppa:mosquitto-dev/mosquitto-ppa

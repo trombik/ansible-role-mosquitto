@@ -24,6 +24,7 @@ None
 | `mosquitto_bind_address` | bind address | `""` |
 | `mosquitto_server` | enable and configure `mosquitto` server if yes (or any `True` value). Set `mosquitto_server` to `no` (or `False` value) when you do not want to run `mosquitto` server. | `yes` |
 | `mosquitto_extra_packages` | list of dict of extra packages to install (see below) | `[]` |
+| `mosquitto_wait_for_timeout` | how long to wait for the service to start, or timeout in second for `wait_for` in task and handler | `30` |
 | `mosquitto_config` | string of `mosquitto.conf(5)` | `""` |
 
 ## `mosquitto_extra_packages`
