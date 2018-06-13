@@ -32,6 +32,7 @@
     name: "{{ mosquitto_service }}"
     enabled: true
     state: started
+  register: __mosquitto_service_start
 
 - name: Wait for mosquitto to listen in task
   # XXX the server does not validate upon startup. even if the file is not
@@ -39,4 +40,6 @@
   wait_for:
     host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
     port: "{{ mosquitto_port }}"
-    timeout: 300
+    timeout: "{{ mosquitto_wait_for_timeout }}"
+  when:
+    - __mosquitto_service_start.changed

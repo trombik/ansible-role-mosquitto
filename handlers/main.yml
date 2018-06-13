@@ -13,7 +13,7 @@
   wait_for:
     host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
     port: "{{ mosquitto_port }}"
-    timeout: 300
+    timeout: "{{ mosquitto_wait_for_timeout }}"
     state: stopped
 
 - name: Start mosquitto in handler
@@ -27,4 +27,4 @@
   wait_for:
     host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
     port: "{{ mosquitto_port }}"
-    timeout: 300
+    timeout: "{{ mosquitto_wait_for_timeout }}"
