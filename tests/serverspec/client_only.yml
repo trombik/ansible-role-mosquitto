@@ -1,9 +1,9 @@
 - hosts: localhost
   roles:
-    - name: trombik.redhat-repo
+    - name: trombik.redhat_repo
       when:
         - ansible_os_family == 'RedHat'
-    - name: trombik.apt-repo
+    - name: trombik.apt_repo
       when:
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version is version('18.04', '<')
