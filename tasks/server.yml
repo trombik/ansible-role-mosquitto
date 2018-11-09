@@ -18,6 +18,12 @@
     state: directory
   notify: Restart mosquitto
 
+- name: Include x509_certificate
+  include_role:
+    name: trombik.x509_certificate
+  when:
+    - mosquitto_include_x509_certificate
+
 - name: Create mosquitto.conf
   template:
     owner: root
