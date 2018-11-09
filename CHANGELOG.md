@@ -1,3 +1,8 @@
+## Release 1.2.0
+
+* 55949d8 feature: support TLS
+* 04bb650 bugfix: QA, update boxes, update meta/main.yml
+
 ## Release 1.1.0
 
 * e6e1c59 [bugfix] add integration test (#10)
