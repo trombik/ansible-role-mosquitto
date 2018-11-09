@@ -11,6 +11,7 @@ db_dir  = "/var/lib/mosquitto"
 pid_file = "/var/run/mosquitto.pid"
 default_user = "root"
 default_group = "root"
+extra_group = "cert"
 
 case os[:family]
 when "freebsd"
@@ -32,6 +33,14 @@ certfile = "#{conf_dir}/certs/public/mosquitto.pub"
 
 describe package(package) do
   it { should be_installed }
+end
+
+describe group extra_group do
+  it { should exist }
+end
+
+describe user user do
+  it { should belong_to_group extra_group }
 end
 
 case os[:family]

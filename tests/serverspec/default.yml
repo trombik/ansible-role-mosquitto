@@ -12,6 +12,8 @@
     ca_cert_file: "{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}/etc/ssl/certs/ca-certificates.crt{% elif ansible_os_family == 'RedHat' %}/etc/ssl/certs/ca-bundle.crt{% else %}/etc/ssl/cert.pem{% endif %}"
     mosquitto_include_x509_certificate: yes
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
+    mosquitto_extra_groups:
+      - name: cert
     mosquitto_config: |
       user {{ mosquitto_user }}
       pid_file {{ mosquitto_pid_file }}
