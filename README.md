@@ -1,4 +1,4 @@
-# ansible-role-mosquitto
+# `ansible` role `mosquitto`
 
 Configure mosquitto MQTT server.
 
@@ -25,6 +25,7 @@ None
 | `mosquitto_server` | enable and configure `mosquitto` server if yes (or any `True` value). Set `mosquitto_server` to `no` (or `False` value) when you do not want to run `mosquitto` server. | `yes` |
 | `mosquitto_extra_packages` | list of dict of extra packages to install (see below) | `[]` |
 | `mosquitto_wait_for_timeout` | how long to wait for the service to start, or timeout in second for `wait_for` in task and handler | `30` |
+| `mosquitto_include_x509_certificate` | If `true` value, include [`trombik.x509_certificate`](https://github.com/trombik/ansible-role-x509_certificate) `ansible` role during the play | `no` |
 | `mosquitto_config` | string of `mosquitto.conf(5)` | `""` |
 
 ## `mosquitto_extra_packages`
@@ -91,17 +92,30 @@ None
         - ansible_distribution_version is version('18.04', '<')
     - name: ansible-role-mosquitto
   vars:
+    ca_cert_file: "{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}/etc/ssl/certs/ca-certificates.crt{% elif ansible_os_family == 'RedHat' %}/etc/ssl/certs/ca-bundle.crt{% else %}/etc/ssl/cert.pem{% endif %}"
+    mosquitto_include_x509_certificate: yes
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
     mosquitto_config: |
       user {{ mosquitto_user }}
       pid_file {{ mosquitto_pid_file }}
-      bind_address {{ mosquitto_bind_address }}
-      port {{ mosquitto_port }}
       log_dest syslog
       autosave_interval 1800
       persistence true
       persistence_location {{ mosquitto_db_dir }}/
       persistence_file mosquitto.db
+
+      # plain MQTT
+      listener {{ mosquitto_port }} {{ mosquitto_bind_address }}
+
+      # MQTT/TLS
+      listener 8883 {{ mosquitto_bind_address }}
+      # even when self-signed cert is used, `cafile` must be set here. without
+      # it, TLS will not be activated
+      cafile {{ ca_cert_file }}
+      keyfile {{ mosquitto_conf_dir }}/certs/private/mosquitto.key
+      certfile {{ mosquitto_conf_dir }}/certs/public/mosquitto.pub
+      tls_version tlsv1
+
     x509_certificate_debug_log: yes
     x509_certificate:
       - name: mosquitto
@@ -109,6 +123,8 @@ None
         public:
           path: "{{ mosquitto_conf_dir }}/certs/public/mosquitto.pub"
           mode: "0444"
+          owner: "{{ mosquitto_user }}"
+          group: "{{ mosquitto_group }}"
           key: |
             -----BEGIN CERTIFICATE-----
             MIIDOjCCAiICCQDaGChPypIR9jANBgkqhkiG9w0BAQUFADBfMQswCQYDVQQGEwJB

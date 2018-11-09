@@ -9,17 +9,30 @@
         - ansible_distribution_version is version('18.04', '<')
     - name: ansible-role-mosquitto
   vars:
+    ca_cert_file: "{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}/etc/ssl/certs/ca-certificates.crt{% elif ansible_os_family == 'RedHat' %}/etc/ssl/certs/ca-bundle.crt{% else %}/etc/ssl/cert.pem{% endif %}"
+    mosquitto_include_x509_certificate: yes
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
     mosquitto_config: |
       user {{ mosquitto_user }}
       pid_file {{ mosquitto_pid_file }}
-      bind_address {{ mosquitto_bind_address }}
-      port {{ mosquitto_port }}
       log_dest syslog
       autosave_interval 1800
       persistence true
       persistence_location {{ mosquitto_db_dir }}/
       persistence_file mosquitto.db
+
+      # plain MQTT
+      listener {{ mosquitto_port }} {{ mosquitto_bind_address }}
+
+      # MQTT/TLS
+      listener 8883 {{ mosquitto_bind_address }}
+      # even when self-signed cert is used, `cafile` must be set here. without
+      # it, TLS will not be activated
+      cafile {{ ca_cert_file }}
+      keyfile {{ mosquitto_conf_dir }}/certs/private/mosquitto.key
+      certfile {{ mosquitto_conf_dir }}/certs/public/mosquitto.pub
+      tls_version tlsv1
+
     x509_certificate_debug_log: yes
     x509_certificate:
       - name: mosquitto
@@ -27,6 +40,8 @@
         public:
           path: "{{ mosquitto_conf_dir }}/certs/public/mosquitto.pub"
           mode: "0444"
+          owner: "{{ mosquitto_user }}"
+          group: "{{ mosquitto_group }}"
           key: |
             -----BEGIN CERTIFICATE-----
             MIIDOjCCAiICCQDaGChPypIR9jANBgkqhkiG9w0BAQUFADBfMQswCQYDVQQGEwJB
