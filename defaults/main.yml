@@ -14,5 +14,6 @@ mosquitto_server: yes
 mosquitto_extra_packages: []
 mosquitto_wait_for_timeout: 30
 mosquitto_include_x509_certificate: no
+mosquitto_extra_groups: []
 
 mosquitto_config: ""
