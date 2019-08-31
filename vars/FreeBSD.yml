@@ -1,3 +1,4 @@
+---
 __mosquitto_user: nobody
 __mosquitto_group: nobody
 __mosquitto_db_dir: /var/db/mosquitto
