@@ -1,3 +1,5 @@
+---
+
 mosquitto_user: "{{ __mosquitto_user }}"
 mosquitto_group: "{{ __mosquitto_group }}"
 mosquitto_log_dir: /var/log/mosquitto
