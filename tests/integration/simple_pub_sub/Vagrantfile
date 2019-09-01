@@ -11,8 +11,8 @@ def local_ip
       s.connect "8.8.8.8", 1 # any global IP address works here
       s.addr.last
     end
-                ensure
-                  Socket.do_not_reverse_lookup = orig
+  ensure
+    Socket.do_not_reverse_lookup = orig
   end
 end
 
