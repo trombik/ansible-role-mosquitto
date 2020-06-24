@@ -28,6 +28,7 @@ None
 | `mosquitto_include_x509_certificate` | If `true` value, include [`trombik.x509_certificate`](https://github.com/trombik/ansible-role-x509_certificate) `ansible` role during the play | `no` |
 | `mosquitto_extra_groups` | List of dict of groups into which user `mosquitto_user` is added. If the group does not exist, the role will create it. | `[]` |
 | `mosquitto_config` | string of `mosquitto.conf(5)` | `""` |
+| `mosquitto_acl_files`| list of ACL files (see below) | `[]` |
 
 ## `mosquitto_extra_packages`
 
@@ -38,6 +39,17 @@ uninstall).
 |-----|-------------|------------|
 | `name` | package name | yes |
 | `state` | either `present` or `absent`. `present` if omitted | no |
+
+
+## `mosquitto_acl_files`
+
+This is a list of dict of ACL files to create or delete.
+
+| Key | Description | Mandatory? |
+|-----|-------------|------------|
+| `path` | path to ACL file | yes |
+| `state` | either `present` or `absent` | yes |
+| `content` | the content of the file | no |
 
 ## Debian
 

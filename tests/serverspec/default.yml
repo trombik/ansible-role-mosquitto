@@ -15,6 +15,23 @@
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
     mosquitto_extra_groups:
       - name: cert
+    mosquitto_acl_files:
+      - name: my acl
+        path: "{{ mosquitto_conf_dir }}/my.acl"
+        state: present
+        content: |
+          topic read $SYS/#
+          topic readwrite public/#
+          topic read public_read/#
+          topic write public_write/#
+          user foo
+          topic readwrite foo/#
+          user bar
+          topic readwrite bar/#
+          user admin
+          topic readwrite foo/#
+          topic readwrite bar/#
+
     mosquitto_config: |
       user {{ mosquitto_user }}
       pid_file {{ mosquitto_pid_file }}
@@ -23,6 +40,8 @@
       persistence true
       persistence_location {{ mosquitto_db_dir }}/
       persistence_file mosquitto.db
+      allow_anonymous true
+      acl_file {{ mosquitto_conf_dir }}/my.acl
 
       # plain MQTT
       listener {{ mosquitto_port }} {{ mosquitto_bind_address }}
@@ -34,7 +53,8 @@
       cafile {{ ca_cert_file }}
       keyfile {{ mosquitto_conf_dir }}/certs/private/mosquitto.key
       certfile {{ mosquitto_conf_dir }}/certs/public/mosquitto.pub
-      tls_version tlsv1
+      # XXX OpenBSD 6.6 does not support TLS 1.3
+      tls_version tlsv1.2
 
     x509_certificate_debug_log: yes
     x509_certificate:
