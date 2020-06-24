@@ -17,5 +17,6 @@ mosquitto_extra_packages: []
 mosquitto_wait_for_timeout: 30
 mosquitto_include_x509_certificate: no
 mosquitto_extra_groups: []
+mosquitto_acl_files: []
 
 mosquitto_config: ""

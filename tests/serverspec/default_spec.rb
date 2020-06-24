@@ -30,6 +30,7 @@ end
 config  = "#{conf_dir}/mosquitto.conf"
 keyfile = "#{conf_dir}/certs/private/mosquitto.key"
 certfile = "#{conf_dir}/certs/public/mosquitto.pub"
+acl_file = "#{conf_dir}/my.acl"
 
 describe package(package) do
   it { should be_installed }
@@ -66,6 +67,15 @@ describe file keyfile do
   it { should be_owned_by user }
   it { should be_grouped_into group }
   its(:content) { should match(/^-----BEGIN RSA PRIVATE KEY-----$/) }
+end
+
+describe file(acl_file) do
+  it { should be_file }
+  it { should be_mode 640 }
+  it { should be_owned_by default_user }
+  it { should be_grouped_into group }
+  its(:content) { should match(/Managed by ansible/) }
+  its(:content) { should match(%r{^topic read \$SYS/#}) }
 end
 
 describe file(config) do
@@ -115,14 +125,22 @@ ports.each do |p|
   end
 end
 
-describe command "echo | openssl s_client -connect 10.0.2.15:8883 -tls1" do
-  its(:stdout) { should match(%r{subject=/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd/CN=foo.example.org}) }
+describe command "echo | openssl s_client -connect 10.0.2.15:8883 -tls1_2" do
+  case os[:family]
+  when "openbsd", "redhat"
+    its(:stdout) { should match(Regexp.escape("subject=/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd/CN=foo.example.org")) }
+  else
+    its(:stdout) { should match(%r{subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = foo.example.org}) }
+  end
 end
 
-describe command "echo | openssl s_client -connect 10.0.2.15:1883 -tls1" do
-  if ((os[:family] == "ubuntu" && os[:release].to_f == 18.04)) || os[:family] == "redhat"
+describe command "echo | openssl s_client -connect 10.0.2.15:1883 -tls1_2" do
+  case os[:family]
+  when "ubuntu", "redhat"
     its(:stderr) { should match(/write:errno=104/) }
+  when "openbsd"
+    its(:stderr) { should match(/CONNECT_CR_SRVR_HELLO:ssl handshake failure/) }
   else
-    its(:stderr) { should match(/ssl handshake failure/) }
+    its(:stderr) { should match(/write:errno=0/) }
   end
 end

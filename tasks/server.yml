@@ -24,6 +24,27 @@
   when:
     - mosquitto_include_x509_certificate
 
+- name: Create mosquitto_acl_files
+  template:
+    owner: root
+    group: "{{ mosquitto_group }}"
+    src: acl.j2
+    mode: 0640
+    dest: "{{ item['path'] }}"
+  when:
+    - "item['state'] == 'present'"
+  with_items: "{{ mosquitto_acl_files }}"
+  notify: Restart mosquitto
+
+- name: Delete mosquitto_acl_files
+  file:
+    path: "{{ item['path'] }}"
+    state: "{{ item['state'] }}"
+  when:
+    - "item['state'] == 'absent'"
+  with_items: "{{ mosquitto_acl_files }}"
+  notify: Restart mosquitto
+
 - name: Create mosquitto.conf
   template:
     owner: root
