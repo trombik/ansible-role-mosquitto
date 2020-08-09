@@ -1,3 +1,8 @@
+## Release 1.3.1
+
+* 4cc695e bugfix: follow upstream change in group name
+
+
 ## Release 1.3.0
 
 * 0ba7e24 bugfix: update TLS tests
