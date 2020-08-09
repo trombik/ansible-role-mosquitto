@@ -130,7 +130,7 @@ describe command "echo | openssl s_client -connect 10.0.2.15:8883 -tls1_2" do
   when "openbsd", "redhat"
     its(:stdout) { should match(Regexp.escape("subject=/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd/CN=foo.example.org")) }
   else
-    its(:stdout) { should match(%r{subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = foo.example.org}) }
+    its(:stdout) { should match(/subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = foo.example.org/) }
   end
 end
 
