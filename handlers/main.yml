@@ -1,8 +1,13 @@
 ---
 
+- name: Reload mosquitto
+  service:
+    name: "{{ mosquitto_service }}"
+    state: reloaded
+
 - name: Restart mosquitto
   service:
-    name: mosquitto
+    name: "{{ mosquitto_service }}"
     state: stopped
   notify:
     - Wait for mosquitto to stop listening in handler
@@ -18,7 +23,7 @@
 
 - name: Start mosquitto in handler
   service:
-    name: mosquitto
+    name: "{{ mosquitto_service }}"
     state: started
 
 - name: Wait for mosquitto to listen in handler

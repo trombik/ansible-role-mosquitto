@@ -45,6 +45,15 @@
   with_items: "{{ mosquitto_acl_files }}"
   notify: Restart mosquitto
 
+- name: Create mosquitto_accounts
+  template:
+    src: passwd.j2
+    dest: "{{ mosquitto_accounts_file }}"
+    group: "{{ mosquitto_group }}"
+    mode: 0640
+  notify:
+    - Reload mosquitto
+
 - name: Create mosquitto.conf
   template:
     owner: root
