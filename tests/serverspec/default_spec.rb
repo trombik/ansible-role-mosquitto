@@ -140,7 +140,7 @@ end
 
 describe command "echo | openssl s_client -connect 10.0.2.15:8883 -tls1_2" do
   case os[:family]
-  when "openbsd"
+  when "openbsd", "redhat"
     its(:stdout) { should match(Regexp.escape("subject=/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd/CN=mqtt")) }
   else
     its(:stdout) { should match(/subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = mqtt/) }
@@ -152,10 +152,11 @@ describe command "echo | openssl s_client -connect 10.0.2.15:1883 -tls1_2" do
   when "ubuntu", "redhat"
     its(:stderr) { should match(/write:errno=104/) }
   when "openbsd"
-    its(:stderr) { should match(/CONNECT_CR_SRVR_HELLO:ssl handshake failure/) }
+    its(:stderr) { should match(/read:errno=0/) }
   else
     its(:stderr) { should match(/write:errno=0/) }
   end
+  its(:stdout) { should match(/#{Regexp.escape("New, (NONE), Cipher is (NONE)")}/) }
 end
 
 describe file "#{conf_dir}/passwd" do
