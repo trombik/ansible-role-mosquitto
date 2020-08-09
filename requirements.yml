@@ -1,5 +1,6 @@
 ---
-
-- name: trombik.redhat_repo
-- name: trombik.apt_repo
-- name: trombik.x509_certificate
+roles:
+  - name: trombik.redhat_repo
+  - name: trombik.apt_repo
+  - name: trombik.x509_certificate
+collections: []
