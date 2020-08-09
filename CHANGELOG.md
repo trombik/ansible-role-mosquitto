@@ -1,3 +1,22 @@
+## Release 1.3.0
+
+* 0ba7e24 bugfix: update TLS tests
+* 5a34290 bugfix: follow output chnage on RedHat
+* e2ed056 bugfix: update boxen
+* 3bdf08e bugfix: use new format
+* 7210b5b bugfix: remove ansible_vault_password_file to fix the build
+* 2e7265e bugfix: update bundler to 2.x
+* 28f2a4f bugfix: update Gemfile
+* ddb6d62 feature: implement MQTT accounts
+* 5b4a3d1 bugfix: QA
+* d29c3a1 feature: introduce mosquitto_acl_files
+* e9ffd81 bugfix: update boxes, add updated .travisci.yml
+* 463bcb0 QA
+* c4e95c3 QA
+* 139d71d bump FreeBSD version, add .yamllint
+* 03269c0 QA
+* e807453 feature: introduce mosquitto_extra_groups
+
 ## Release 1.2.0
 
 * 55949d8 feature: support TLS
