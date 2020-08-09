@@ -18,5 +18,7 @@ mosquitto_wait_for_timeout: 30
 mosquitto_include_x509_certificate: no
 mosquitto_extra_groups: []
 mosquitto_acl_files: []
+mosquitto_accounts: []
+mosquitto_accounts_file: "{{ mosquitto_conf_dir }}/passwd"
 
 mosquitto_config: ""

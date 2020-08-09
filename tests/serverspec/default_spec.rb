@@ -20,17 +20,21 @@ when "freebsd"
   conf_dir = "/usr/local/etc/mosquitto"
   db_dir = "/var/db/mosquitto"
   default_group = "wheel"
+  ca_file = "/etc/ssl/cert.pem"
 when "ubuntu"
   group = "nogroup"
 when "openbsd"
   user = "_mosquitto"
   group = "_mosquitto"
   db_dir = "/var/db/mosquitto"
+  ca_file = "/etc/ssl/cert.pem"
 end
 config  = "#{conf_dir}/mosquitto.conf"
 keyfile = "#{conf_dir}/certs/private/mosquitto.key"
 certfile = "#{conf_dir}/certs/public/mosquitto.pub"
 acl_file = "#{conf_dir}/my.acl"
+passwd_file = "#{conf_dir}/passwd"
+ca_file = "#{conf_dir}/certs/ca.pem"
 
 describe package(package) do
   it { should be_installed }
@@ -76,6 +80,15 @@ describe file(acl_file) do
   it { should be_grouped_into group }
   its(:content) { should match(/Managed by ansible/) }
   its(:content) { should match(%r{^topic read \$SYS/#}) }
+end
+
+describe file passwd_file do
+  it { should be_file }
+  it { should be_mode 640 }
+  it { should be_owned_by default_user }
+  it { should be_grouped_into group }
+  its(:content) { should match(/Managed by ansible/) }
+  its(:content) { should match(/^foo:\$\d+\$.*==$/) }
 end
 
 describe file(config) do
@@ -130,7 +143,7 @@ describe command "echo | openssl s_client -connect 10.0.2.15:8883 -tls1_2" do
   when "openbsd", "redhat"
     its(:stdout) { should match(Regexp.escape("subject=/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd/CN=foo.example.org")) }
   else
-    its(:stdout) { should match(/subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = foo.example.org/) }
+    its(:stdout) { should match(/subject=C = AU, ST = Some-State, O = Internet Widgits Pty Ltd, CN = mqtt/) }
   end
 end
 
@@ -142,5 +155,27 @@ describe command "echo | openssl s_client -connect 10.0.2.15:1883 -tls1_2" do
     its(:stderr) { should match(/CONNECT_CR_SRVR_HELLO:ssl handshake failure/) }
   else
     its(:stderr) { should match(/write:errno=0/) }
+  end
+end
+
+describe file "#{conf_dir}/passwd" do
+  it { should be_file }
+  it { should be_mode 640 }
+  it { should be_owned_by default_user }
+  it { should be_grouped_into group }
+  %w[foo bar admin].each do |u|
+    its(:content) { should match(/^#{Regexp.escape(u)}:\$\d+\$.*/) }
+  end
+end
+# XXX as mosquitto does not return errors to MQTT clients when ACLs deny the
+# access, you cannot test failed attempt to read. in that case, mosquitto_sub
+# dos not return.
+#
+# authenticated users can read `$SYS/#`
+%w[foo bar admin].each do |u|
+  describe command "mosquitto_sub -h 10.0.2.15 -p 8883 -u #{Shellwords.escape(u)} -P password -t #{Shellwords.escape('$SYS/broker/clients/connected')} -C 1 --cafile #{Shellwords.escape(ca_file)} --insecure -d" do
+    its(:exit_status) { should eq 0 }
+    its(:stderr) { should eq "" }
+    its(:stdout) { should match(/^\d+$/) }
   end
 end

@@ -29,6 +29,8 @@ None
 | `mosquitto_extra_groups` | List of dict of groups into which user `mosquitto_user` is added. If the group does not exist, the role will create it. | `[]` |
 | `mosquitto_config` | string of `mosquitto.conf(5)` | `""` |
 | `mosquitto_acl_files`| list of ACL files (see below) | `[]` |
+| `mosquitto_accounts`| list of MQTT account (see below) | `[]` |
+| `mosquitto_accounts_file` | path to MQTT account database file |
 
 ## `mosquitto_extra_packages`
 
@@ -50,6 +52,16 @@ This is a list of dict of ACL files to create or delete.
 | `path` | path to ACL file | yes |
 | `state` | either `present` or `absent` | yes |
 | `content` | the content of the file | no |
+
+## `mosquitto_accounts`
+
+This is a list of MQTT accounts, pairs of user name and password. An element
+must be a dict with keys below.
+
+| Name | Description |
+|------|-------------|
+| `name` | Name of the MQTT account |
+| `password` | Password of the account |
 
 ## Debian
 

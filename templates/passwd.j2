@@ -1,0 +1,4 @@
+# Managed by ansible
+{% for account in mosquitto_accounts %}
+{{ account['name'] }}:{{ account['password'] }}
+{% endfor %}
