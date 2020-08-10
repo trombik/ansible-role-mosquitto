@@ -34,7 +34,7 @@
   when:
     - "item['state'] == 'present'"
   with_items: "{{ mosquitto_acl_files }}"
-  notify: Restart mosquitto
+  notify: Reload mosquitto
 
 - name: Delete mosquitto_acl_files
   file:
@@ -43,7 +43,7 @@
   when:
     - "item['state'] == 'absent'"
   with_items: "{{ mosquitto_acl_files }}"
-  notify: Restart mosquitto
+  notify: Reload mosquitto
 
 - name: Create mosquitto_accounts
   template:
