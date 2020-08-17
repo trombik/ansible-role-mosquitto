@@ -1,3 +1,7 @@
+## Release 1.3.2
+
+* f044455 bugfix: reload the serivce when ACL files have been modified
+
 ## Release 1.3.1
 
 * 4cc695e bugfix: follow upstream change in group name
