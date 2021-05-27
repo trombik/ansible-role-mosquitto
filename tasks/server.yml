@@ -63,6 +63,19 @@
     dest: "{{ mosquitto_conf_file }}"
   notify: Restart mosquitto
 
+- name: Create mosquitto_pid_dir
+  file:
+    path: "{{ mosquitto_pid_dir }}"
+    owner: "{{ mosquitto_user }}"
+    group: "{{ mosquitto_group }}"
+    mode: 0755
+    state: directory
+  notify:
+    - Restart mosquitto
+  # XXX the package ins PPA hard-coded path to PID file
+  when:
+    - ansible_os_family != 'Debian'
+
 - name: Start mosquitto
   service:
     name: "{{ mosquitto_service }}"

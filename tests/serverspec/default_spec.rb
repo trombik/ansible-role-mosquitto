@@ -8,10 +8,10 @@ user    = "mosquitto"
 group   = "mosquitto"
 ports   = [1883, 8883]
 db_dir  = "/var/lib/mosquitto"
-pid_file = "/var/run/mosquitto.pid"
 default_user = "root"
 default_group = "root"
 extra_group = "cert"
+pid_dir = "/var/run/mosquitto"
 
 case os[:family]
 when "freebsd"
@@ -23,22 +23,27 @@ when "freebsd"
   ca_file = "/etc/ssl/cert.pem"
 when "ubuntu"
   group = "mosquitto"
+  pid_dir = "/var/run"
 when "openbsd"
   user = "_mosquitto"
   group = "_mosquitto"
   db_dir = "/var/db/mosquitto"
   ca_file = "/etc/ssl/cert.pem"
 end
+
 config  = "#{conf_dir}/mosquitto.conf"
 keyfile = "#{conf_dir}/certs/private/mosquitto.key"
 certfile = "#{conf_dir}/certs/public/mosquitto.pub"
 acl_file = "#{conf_dir}/my.acl"
 passwd_file = "#{conf_dir}/passwd"
 ca_file = "#{conf_dir}/certs/ca.pem"
+pid_file = "#{pid_dir}/mosquitto.pid"
 
 describe package(package) do
   it { should be_installed }
 end
+
+mosquitto_version = Specinfra.backend.run_command("mosquitto -h").stdout.match(/mosquitto version (\d+\.\d+\.\d+)/).captures.first
 
 describe group extra_group do
   it { should exist }
@@ -114,6 +119,41 @@ describe file(db_dir) do
   it { should be_mode 755 }
   it { should be_owned_by user }
   it { should be_grouped_into group }
+end
+
+describe file(pid_dir) do
+  it { should exist }
+  case os[:family]
+  when "ubuntu"
+    it { should be_owned_by default_user }
+    it { should be_grouped_into default_group }
+  else
+    it { should be_mode 755 }
+    it { should be_owned_by user }
+    it { should be_grouped_into group }
+  end
+  it { should be_directory }
+end
+
+# XXX the init script in CentOS package runs the daemon without "-d" flag.
+# without it, the PID file is not written at all.
+if os[:family] != "redhat"
+  describe file(pid_file) do
+    it { should exist }
+    it { should be_file }
+    it { should be_mode 644 }
+    case os[:family]
+    when "ubuntu"
+      it { should be_owned_by default_user }
+      it { should be_grouped_into default_group }
+    when "openbsd"
+      it { should be_owned_by mosquitto_version.split(".").first.to_i < 2 ? default_user : user }
+      it { should be_grouped_into group }
+    else
+      it { should be_owned_by user }
+      it { should be_grouped_into group }
+    end
+  end
 end
 
 case os[:family]

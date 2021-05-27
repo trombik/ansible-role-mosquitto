@@ -8,7 +8,8 @@ mosquitto_service: mosquitto
 mosquitto_conf_dir: "{{ __mosquitto_conf_dir }}"
 mosquitto_conf_file: "{{ __mosquitto_conf_dir }}/mosquitto.conf"
 mosquitto_package: mosquitto
-mosquitto_pid_file: /var/run/mosquitto.pid
+mosquitto_pid_dir: "{{ __mosquitto_pid_dir }}"
+mosquitto_pid_file: "{{ mosquitto_pid_dir }}/mosquitto.pid"
 mosquitto_flags: ""
 mosquitto_port: 1883
 mosquitto_bind_address: ""

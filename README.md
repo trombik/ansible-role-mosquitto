@@ -18,7 +18,8 @@ None
 | `mosquitto_conf_dir` | directory of configuration files | `{{ __mosquitto_conf_dir }}` |
 | `mosquitto_conf_file` | path to `mosquitto.conf` | `{{ __mosquitto_conf_dir }}/mosquitto.conf` |
 | `mosquitto_package` | | `mosquitto` |
-| `mosquitto_pid_file` | path to PID file | `/var/run/mosquitto.pid` |
+| `mosquitto_pid_dir` | path to directory of PID file | `{{ __mosquitto_pid_dir }}` |
+| `mosquitto_pid_file` | path to PID file. this variable has no effect on RedHat. on Debian family, this variable cannot changed from the default (`/var/run/mosquitto.pid`) because the path is hard-coded in the startup script | `{{ mosquitto_pid_dir }} /mosquitto.pid` |
 | `mosquitto_flags` | flags to pass start up script (currently, FreeBSD only) | `""` |
 | `mosquitto_port` | port to listen on | `1883` |
 | `mosquitto_bind_address` | bind address | `""` |
@@ -106,6 +107,7 @@ None
 # Example Playbook
 
 ```yaml
+---
 - hosts: localhost
   roles:
     - name: trombik.redhat_repo
@@ -117,19 +119,49 @@ None
         - ansible_distribution_version is version('18.04', '<')
     - name: ansible-role-mosquitto
   vars:
-    ca_cert_file: "{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}/etc/ssl/certs/ca-certificates.crt{% elif ansible_os_family == 'RedHat' %}/etc/ssl/certs/ca-bundle.crt{% else %}/etc/ssl/cert.pem{% endif %}"
+    ca_cert_file: "{{ mosquitto_conf_dir }}/certs/ca.pem"
     mosquitto_include_x509_certificate: yes
     mosquitto_bind_address: "{{ ansible_default_ipv4.address }}"
     mosquitto_extra_groups:
       - name: cert
+    mosquitto_acl_files:
+      - name: my acl
+        path: "{{ mosquitto_conf_dir }}/my.acl"
+        state: present
+        content: |
+          topic readwrite public/#
+          topic read public_read/#
+          topic write public_write/#
+          user foo
+          topic read $SYS/#
+          topic readwrite foo/#
+          user bar
+          topic read $SYS/#
+          topic readwrite bar/#
+          user admin
+          topic read $SYS/#
+          topic readwrite foo/#
+          topic readwrite bar/#
+    mosquitto_accounts:
+      - name: foo
+        # `password`
+        password: "$6$J8WUb3oFK94I6be3$lTvSR9GPnSZUhg0W0chY2rVcmY04sxGrLBq0it0j0zFiud/S2G8wooFaDVN2xJGGz/FoGk3HO0V4wvd8hlBvcw=="
+      - name: bar
+        password: "$6$J8WUb3oFK94I6be3$lTvSR9GPnSZUhg0W0chY2rVcmY04sxGrLBq0it0j0zFiud/S2G8wooFaDVN2xJGGz/FoGk3HO0V4wvd8hlBvcw=="
+      - name: admin
+        password: "$6$J8WUb3oFK94I6be3$lTvSR9GPnSZUhg0W0chY2rVcmY04sxGrLBq0it0j0zFiud/S2G8wooFaDVN2xJGGz/FoGk3HO0V4wvd8hlBvcw=="
     mosquitto_config: |
       user {{ mosquitto_user }}
+      # XXX on Ubuntu, mosquitto_pid_file is hard-coded in the init script.
+      # XXX on CentOS, the file is not written, and `pid_file` is ignored.
       pid_file {{ mosquitto_pid_file }}
       log_dest syslog
       autosave_interval 1800
       persistence true
       persistence_location {{ mosquitto_db_dir }}/
       persistence_file mosquitto.db
+      allow_anonymous true
+      acl_file {{ mosquitto_conf_dir }}/my.acl
 
       # plain MQTT
       listener {{ mosquitto_port }} {{ mosquitto_bind_address }}
@@ -141,10 +173,38 @@ None
       cafile {{ ca_cert_file }}
       keyfile {{ mosquitto_conf_dir }}/certs/private/mosquitto.key
       certfile {{ mosquitto_conf_dir }}/certs/public/mosquitto.pub
-      tls_version tlsv1
+      # XXX OpenBSD 6.6 does not support TLS 1.3
+      tls_version tlsv1.2
 
     x509_certificate_debug_log: yes
     x509_certificate:
+      - name: ca
+        state: present
+        public:
+          path: "{{ ca_cert_file }}"
+          key: |
+            -----BEGIN CERTIFICATE-----
+            MIIDkTCCAnmgAwIBAgIUYVw5fBR144JGJrXP90d8KxMkkFIwDQYJKoZIhvcNAQEL
+            BQAwWDELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
+            GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDERMA8GA1UEAwwIZHVtbXkuY2EwHhcN
+            MjAwODA4MDYxOTU0WhcNMjUwODA4MDYxOTU0WjBYMQswCQYDVQQGEwJBVTETMBEG
+            A1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkg
+            THRkMREwDwYDVQQDDAhkdW1teS5jYTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+            AQoCggEBAOe2IYvs5VWLs83VkGN0Geub3me1dRB/QFzyuykhAG1S7BqRkd37EjpZ
+            9DcLKifiLohWWooB63irip8cf/ThFSLSsaQDKUoVKcFNEZg/uKaEGZ21nUnFcFcc
+            rPjJBpAj4T1TDRGv911Zxcqu/OwYBwlgbVGQgA25PvFauB56WdzXhLvA0dPlvNA6
+            4wscJyAmkF5BIBHArdxHzDZXvQMMC2xZOUeuaaS2sVbia1k3n31kkgrMHa4Q8BVa
+            WN883Jz3kwp2344N9EkP25r45azyEHbc91JDwkJH7HYBJS6zxIx09SJ5BZH6JIgf
+            OnOf8NrMCrlGAoWKD8jYK4UOSvbCE6sCAwEAAaNTMFEwHQYDVR0OBBYEFKMCHquf
+            WmJtOxGayRQT5DUsWj2uMB8GA1UdIwQYMBaAFKMCHqufWmJtOxGayRQT5DUsWj2u
+            MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAEoQZg61krEA9OlB
+            bZ1jcTSsW6sSIA+ectMr9+f579WwDpwtR/7Vgh660SxQxMCbir4u6m7dwJD+4bnW
+            29iZidxXshJXh0g/g/0aF2AdnaQR9euS7uyW5iVtNC2IPFR83zyaJ4B8hBjvR99O
+            Ex9LHdGUetuykFq6KjaaX+rh1DlUE7epiUiTfp7BVwa/UkFgBSpYG4c++Hj4+IbZ
+            Uy+krYdt1BJTshfo0LuMumdy7+6+Kipi44xqzof8XRHWG8rcUKSASc/kUSdeAZXn
+            uEZvvmJ7x3ijvrwXZunuL96Q6llo/WvRIMTMnKhBgOuM48g338wWaSQbAH4j8y+k
+            o4Wxowc=
+            -----END CERTIFICATE-----
       - name: mosquitto
         state: present
         public:
@@ -154,24 +214,24 @@ None
           group: "{{ mosquitto_group }}"
           key: |
             -----BEGIN CERTIFICATE-----
-            MIIDOjCCAiICCQDaGChPypIR9jANBgkqhkiG9w0BAQUFADBfMQswCQYDVQQGEwJB
-            VTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0
-            cyBQdHkgTHRkMRgwFgYDVQQDDA9mb28uZXhhbXBsZS5vcmcwHhcNMTcwNzE4MDUx
-            OTAxWhcNMTcwODE3MDUxOTAxWjBfMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29t
-            ZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRgwFgYD
-            VQQDDA9mb28uZXhhbXBsZS5vcmcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
-            AoIBAQDZ9nd1isoGGeH4OFbQ6mpzlldo428LqEYSH4G7fhzLMKdYsIqkMRVl1J3s
-            lXtsMQUUP3dcpnwFwKGzUvuImLHx8McycJKwOp96+5XD4QAoTKtbl59ZRFb3zIjk
-            Owd94Wp1lWvptz+vFTZ1Hr+pEYZUFBkrvGtV9BoGRn87OrX/3JI9eThEpksr6bFz
-            QvcGPrGXWShDJV/hTkWxwRicMMVZVSG6niPusYz2wucSsitPXIrqXPEBKL1J8Ipl
-            8dirQLsH02ZZKcxGctEjlVgnpt6EI+VL6fs5P6A45oJqWmfym+uKztXBXCx+aP7b
-            YUHwn+HV4qzZQld80PSTk6SS3hMXAgMBAAEwDQYJKoZIhvcNAQEFBQADggEBAKgf
-            x3K9GHDK99vsWN8Ej10kwhMlBWBGuM0wkhY0fbxJ0gW3sflK8z42xMc2dhizoYsY
-            sLfN0aylpN/omocl+XcYugLHnW2q8QdsavWYKXqUN0neIMr/V6d1zXqxbn/VKdGr
-            CD4rJwewBattCIL4+S2z+PKr9oCrxjN4i3nujPhKv/yijhrtV+USw1VwuFqsYaqx
-            iScC13F0nGIJiUVs9bbBwBKn1c6GWUHHiFCZY9VJ15SzilWAY/TULsRsHR53L+FY
-            mGfQZBL1nwloDMJcgBFKKbG01tdmrpTTP3dTNL4u25+Ns4nrnorc9+Y/wtPYZ9fs
-            7IVZsbStnhJrawX31DQ=
+            MIIDMzCCAhsCFHw5MqZ+KtGCX1lvV5JWp8aSBbQNMA0GCSqGSIb3DQEBCwUAMFgx
+            CzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRl
+            cm5ldCBXaWRnaXRzIFB0eSBMdGQxETAPBgNVBAMMCGR1bW15LmNhMB4XDTIwMDgw
+            ODA2MjExMVoXDTMwMDgwNjA2MjExMVowVDELMAkGA1UEBhMCQVUxEzARBgNVBAgM
+            ClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEN
+            MAsGA1UEAwwEbXF0dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANtK
+            v+eJMWHfvn9LIa5kWNctYLh7v0WBMD2f6kpzuKAQWRQFb/IHsVxbyfxAZyMD4Gek
+            s9PPx8T7+p+zWg+gW2OxpT8/p81EQ5fgF+dKCcaMFaeBZPdFFiPLCko6uzTlPCi0
+            sni+6IkxjTxitfx9YaDl7+YSwKXSaJaLzQ94ZeaqwdwCBgGuM3ArhCrag9DxYYVs
+            RmXleGDfaQDZkBMuxR05nWiaxMrU1cvIs856NEFmyR002nwAflfQjPxfwgRuaM6M
+            5iXr6wZV6arnYqJsHRYeg7B+evMXWpOILfhq8hbNR4n3fRDbFFz88s4c93306VyU
+            dXeBvd2Cbz3YGoF16GUCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAPEFozRwEvN9a
+            TzaFBqHzyfgYQewkbIWnvfif8Gdo6o6UeO5nMwHtU02UXcbcVLr0seeNqLfWQpP3
+            DnSY76qwiKtKjVDRfI3wToFIaYDqbgzj8PWdcjty6Pfp/w1CkK0bWtZwBQcno0U7
+            05xJFkuszKmzDZCOePyesMURZU6zHBNIWP7FttvwhjPeeo7fgBd5CCLiyMf8gQIt
+            lfEupV6nHWIGQOwQQBWRyYKltRla2Ugw9zEnDmjbSeNdGOHHeietMfhZKXxAuMkS
+            lfipiXzwyi0NBFHZJBf/rVy6TnIsWcppTcgBlDMhpC6I54rjo5+t6xNk470boBt4
+            ZVzvKkfJcw==
             -----END CERTIFICATE-----
         secret:
           path: "{{ mosquitto_conf_dir }}/certs/private/mosquitto.key"
@@ -180,31 +240,31 @@ None
           mode: "0440"
           key: |
             -----BEGIN RSA PRIVATE KEY-----
-            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
+            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
             -----END RSA PRIVATE KEY-----
     redhat_repo_extra_packages:
       - epel-release
