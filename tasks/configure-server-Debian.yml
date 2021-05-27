@@ -1,1 +1,8 @@
 ---
+
+- name: Create /etc/default/mosquitto
+  template:
+    src: Debian.default.j2
+    dest: "/etc/default/{{ mosquitto_service }}"
+  notify:
+    - Restart mosquitto

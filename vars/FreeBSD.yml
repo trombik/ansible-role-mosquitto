@@ -3,3 +3,4 @@ __mosquitto_user: nobody
 __mosquitto_group: nobody
 __mosquitto_db_dir: /var/db/mosquitto
 __mosquitto_conf_dir: /usr/local/etc/mosquitto
+__mosquitto_pid_dir: /var/run/mosquitto

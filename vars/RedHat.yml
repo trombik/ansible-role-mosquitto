@@ -3,3 +3,4 @@ __mosquitto_user: mosquitto
 __mosquitto_group: mosquitto
 __mosquitto_db_dir: /var/lib/mosquitto
 __mosquitto_conf_dir: /etc/mosquitto
+__mosquitto_pid_dir: /var/run/mosquitto

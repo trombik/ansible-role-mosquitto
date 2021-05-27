@@ -43,6 +43,8 @@
         password: "$6$J8WUb3oFK94I6be3$lTvSR9GPnSZUhg0W0chY2rVcmY04sxGrLBq0it0j0zFiud/S2G8wooFaDVN2xJGGz/FoGk3HO0V4wvd8hlBvcw=="
     mosquitto_config: |
       user {{ mosquitto_user }}
+      # XXX on Ubuntu, mosquitto_pid_file is hard-coded in the init script.
+      # XXX on CentOS, the file is not written, and `pid_file` is ignored.
       pid_file {{ mosquitto_pid_file }}
       log_dest syslog
       autosave_interval 1800
