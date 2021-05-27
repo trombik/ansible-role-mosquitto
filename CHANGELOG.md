@@ -1,3 +1,8 @@
+## Release 1.4.0
+
+* 0904368 feature: introduce mosquitto_pid_dir
+* c1f3904 bugfix: QA and update box versions
+
 ## Release 1.3.2
 
 * f044455 bugfix: reload the serivce when ACL files have been modified
