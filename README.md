@@ -69,9 +69,10 @@ must be a dict with keys below.
 | Variable | Default |
 |----------|---------|
 | `__mosquitto_user` | `mosquitto` |
-| `__mosquitto_group` | `nogroup` |
+| `__mosquitto_group` | `mosquitto` |
 | `__mosquitto_db_dir` | `/var/lib/mosquitto` |
 | `__mosquitto_conf_dir` | `/etc/mosquitto` |
+| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
 
 ## FreeBSD
 
@@ -81,6 +82,7 @@ must be a dict with keys below.
 | `__mosquitto_group` | `nobody` |
 | `__mosquitto_db_dir` | `/var/db/mosquitto` |
 | `__mosquitto_conf_dir` | `/usr/local/etc/mosquitto` |
+| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
 
 ## OpenBSD
 
@@ -90,6 +92,7 @@ must be a dict with keys below.
 | `__mosquitto_group` | `_mosquitto` |
 | `__mosquitto_db_dir` | `/var/db/mosquitto` |
 | `__mosquitto_conf_dir` | `/etc/mosquitto` |
+| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
 
 ## RedHat
 
@@ -99,6 +102,7 @@ must be a dict with keys below.
 | `__mosquitto_group` | `mosquitto` |
 | `__mosquitto_db_dir` | `/var/lib/mosquitto` |
 | `__mosquitto_conf_dir` | `/etc/mosquitto` |
+| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
 
 # Dependencies
 
@@ -116,7 +120,6 @@ None
     - name: trombik.apt_repo
       when:
         - ansible_distribution == 'Ubuntu'
-        - ansible_distribution_version is version('18.04', '<')
     - name: ansible-role-mosquitto
   vars:
     ca_cert_file: "{{ mosquitto_conf_dir }}/certs/ca.pem"
