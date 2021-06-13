@@ -135,13 +135,12 @@ if os[:family] != "redhat"
     it { should exist }
     it { should be_file }
     it { should be_mode 644 }
+    it { should be_grouped_into group }
     case os[:family]
     when "openbsd"
       it { should be_owned_by mosquitto_version.split(".").first.to_i < 2 ? default_user : user }
-      it { should be_grouped_into group }
     else
       it { should be_owned_by user }
-      it { should be_grouped_into group }
     end
   end
 end
