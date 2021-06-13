@@ -72,9 +72,6 @@
     state: directory
   notify:
     - Restart mosquitto
-  # XXX the package ins PPA hard-coded path to PID file
-  when:
-    - ansible_os_family != 'Debian'
 
 - name: Start mosquitto
   service:

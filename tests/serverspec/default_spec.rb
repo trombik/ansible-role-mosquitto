@@ -23,7 +23,6 @@ when "freebsd"
   ca_file = "/etc/ssl/cert.pem"
 when "ubuntu"
   group = "mosquitto"
-  pid_dir = "/var/run"
 when "openbsd"
   user = "_mosquitto"
   group = "_mosquitto"
@@ -123,15 +122,9 @@ end
 
 describe file(pid_dir) do
   it { should exist }
-  case os[:family]
-  when "ubuntu"
-    it { should be_owned_by default_user }
-    it { should be_grouped_into default_group }
-  else
-    it { should be_mode 755 }
-    it { should be_owned_by user }
-    it { should be_grouped_into group }
-  end
+  it { should be_mode 755 }
+  it { should be_owned_by user }
+  it { should be_grouped_into group }
   it { should be_directory }
 end
 
@@ -143,9 +136,6 @@ if os[:family] != "redhat"
     it { should be_file }
     it { should be_mode 644 }
     case os[:family]
-    when "ubuntu"
-      it { should be_owned_by default_user }
-      it { should be_grouped_into default_group }
     when "openbsd"
       it { should be_owned_by mosquitto_version.split(".").first.to_i < 2 ? default_user : user }
       it { should be_grouped_into group }
