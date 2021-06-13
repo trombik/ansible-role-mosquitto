@@ -1,3 +1,8 @@
+## Release 1.4.1
+
+* c771a05 bugfix: QA
+* d2ec927 bugfix: support Ubuntu 20.04
+
 ## Release 1.4.0
 
 * 0904368 feature: introduce mosquitto_pid_dir
