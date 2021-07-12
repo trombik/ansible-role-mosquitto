@@ -75,6 +75,14 @@
   when:
     - mosquitto_pid_dir != '/var/run'
 
+- name: Create custom systemd service file
+  template:
+    src: mosquitto.service.j2
+    dest: /lib/systemd/system/mosquitto.service
+    mode: 0644
+  when:
+    - mosquitto_use_custom_systemd_service_file
+
 - name: Start mosquitto
   service:
     name: "{{ mosquitto_service }}"
