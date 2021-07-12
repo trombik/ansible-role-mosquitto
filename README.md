@@ -32,6 +32,7 @@ None
 | `mosquitto_acl_files`| list of ACL files (see below) | `[]` |
 | `mosquitto_accounts`| list of MQTT account (see below) | `[]` |
 | `mosquitto_accounts_file` | path to MQTT account database file |
+| `mosquitto_use_custom_systemd_service_file` | install custom `systemd` service file (obtained from mosquitto-dev/mosquitto-ppa). see below | `false` |
 
 ## `mosquitto_extra_packages`
 
@@ -63,6 +64,13 @@ must be a dict with keys below.
 |------|-------------|
 | `name` | Name of the MQTT account |
 | `password` | Password of the account |
+
+## `mosquitto_use_custom_systemd_service_file`
+
+Some distributions installs broken `systemd` service file for `mosquitto`,
+which does not support `reload`. If this variable is true, the role installs
+one that supports `reload`. The file is identical to one in
+`mosquitto-dev/mosquitto-ppa` packages.
 
 ## Debian
 

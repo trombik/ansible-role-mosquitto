@@ -21,5 +21,6 @@ mosquitto_extra_groups: []
 mosquitto_acl_files: []
 mosquitto_accounts: []
 mosquitto_accounts_file: "{{ mosquitto_conf_dir }}/passwd"
+mosquitto_use_custom_systemd_service_file: false
 
 mosquitto_config: ""
