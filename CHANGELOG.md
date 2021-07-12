@@ -1,3 +1,8 @@
+## Release 1.4.2
+
+* 7e613ed bugfix: introduce hackish mosquitto_use_custom_systemd_service_file
+* dac8363 bugfix: support Devuan
+
 ## Release 1.4.1
 
 * c771a05 bugfix: QA
