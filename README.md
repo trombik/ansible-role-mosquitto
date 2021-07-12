@@ -74,6 +74,12 @@ must be a dict with keys below.
 | `__mosquitto_conf_dir` | `/etc/mosquitto` |
 | `__mosquitto_pid_dir` | `/var/run/mosquitto` |
 
+## Devuan
+
+| Variable | Default |
+|----------|---------|
+| `__mosquitto_pid_dir` | `/var/run` |
+
 ## FreeBSD
 
 | Variable | Default |

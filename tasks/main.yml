@@ -3,6 +3,12 @@
 
 - include_vars: "{{ ansible_os_family }}.yml"
 
+- name: "Include {{ ansible_distribution }}.yml (Debian family only)"
+  include_vars: "{{ ansible_distribution }}.yml"
+  when:
+    - ansible_os_family == 'Debian'
+    - ansible_distribution != 'Debian'
+
 - include: "install-{{ ansible_os_family }}.yml"
 
 - name: Create mosquitto_extra_groups

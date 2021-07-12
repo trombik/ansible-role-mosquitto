@@ -72,6 +72,8 @@
     state: directory
   notify:
     - Restart mosquitto
+  when:
+    - mosquitto_pid_dir != '/var/run'
 
 - name: Start mosquitto
   service:
