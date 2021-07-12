@@ -21,7 +21,7 @@ ports.each do |p|
 end
 
 case os[:family]
-when "ubuntu"
+when "ubuntu", "devuan"
   describe package("mosquitto-clients") do
     it { should be_installed }
   end
