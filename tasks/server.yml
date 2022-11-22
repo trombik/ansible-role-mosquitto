@@ -1,7 +1,7 @@
 ---
 
 - name: Create log directory
-  file:
+  ansible.builtin.file:
     path: "{{ mosquitto_log_dir }}"
     mode: 0755
     owner: "{{ mosquitto_user }}"
@@ -10,7 +10,7 @@
   notify: Restart mosquitto
 
 - name: Create db directory
-  file:
+  ansible.builtin.file:
     path: "{{ mosquitto_db_dir }}"
     mode: 0755
     owner: "{{ mosquitto_user }}"
@@ -19,13 +19,13 @@
   notify: Restart mosquitto
 
 - name: Include x509_certificate
-  include_role:
+  ansible.builtin.include_role:
     name: trombik.x509_certificate
   when:
     - mosquitto_include_x509_certificate
 
 - name: Create mosquitto_acl_files
-  template:
+  ansible.builtin.template:
     owner: root
     group: "{{ mosquitto_group }}"
     src: acl.j2
@@ -37,7 +37,7 @@
   notify: Reload mosquitto
 
 - name: Delete mosquitto_acl_files
-  file:
+  ansible.builtin.file:
     path: "{{ item['path'] }}"
     state: "{{ item['state'] }}"
   when:
@@ -46,7 +46,7 @@
   notify: Reload mosquitto
 
 - name: Create mosquitto_accounts
-  template:
+  ansible.builtin.template:
     src: passwd.j2
     dest: "{{ mosquitto_accounts_file }}"
     group: "{{ mosquitto_group }}"
@@ -55,7 +55,7 @@
     - Reload mosquitto
 
 - name: Create mosquitto.conf
-  template:
+  ansible.builtin.template:
     owner: root
     group: "{{ mosquitto_group }}"
     mode: 0640
@@ -64,7 +64,7 @@
   notify: Restart mosquitto
 
 - name: Create mosquitto_pid_dir
-  file:
+  ansible.builtin.file:
     path: "{{ mosquitto_pid_dir }}"
     owner: "{{ mosquitto_user }}"
     group: "{{ mosquitto_group }}"
@@ -76,7 +76,7 @@
     - mosquitto_pid_dir != '/var/run'
 
 - name: Create custom systemd service file
-  template:
+  ansible.builtin.template:
     src: mosquitto.service.j2
     dest: /lib/systemd/system/mosquitto.service
     mode: 0644
@@ -84,7 +84,7 @@
     - mosquitto_use_custom_systemd_service_file
 
 - name: Start mosquitto
-  service:
+  ansible.builtin.service:
     name: "{{ mosquitto_service }}"
     enabled: true
     state: started
@@ -93,7 +93,7 @@
 - name: Wait for mosquitto to listen in task
   # XXX the server does not validate upon startup. even if the file is not
   # correct, it returns zero exit status.
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
     port: "{{ mosquitto_port }}"
     timeout: "{{ mosquitto_wait_for_timeout }}"

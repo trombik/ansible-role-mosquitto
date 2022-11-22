@@ -1,6 +1,6 @@
 ---
 - name: Ensure mosquitto server is disabled
-  service:
+  ansible.builtin.service:
     name: "{{ mosquitto_service }}"
     enabled: false
     state: stopped

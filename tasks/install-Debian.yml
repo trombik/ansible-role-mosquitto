@@ -1,19 +1,19 @@
 ---
 
 - name: Install mosquitto
-  apt:
+  ansible.builtin.apt:
     name: "{{ mosquitto_package }}"
     state: present
   when:
     - mosquitto_server
 
 - name: Install mosquitto-clients
-  apt:
+  ansible.builtin.apt:
     name: mosquitto-clients
     state: present
 
 - name: Install or uninstall mosquitto_extra_packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ item.name }}"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ mosquitto_extra_packages }}"

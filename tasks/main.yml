@@ -1,10 +1,10 @@
 ---
 # tasks file for ansible-role-mosquitto
 
-- include_vars: "{{ ansible_os_family }}.yml"
+- ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
 
 - name: "Include {{ ansible_distribution }}.yml (Debian family only)"
-  include_vars: "{{ ansible_distribution }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
   when:
     - ansible_os_family == 'Debian'
     - ansible_distribution != 'Debian'
@@ -12,13 +12,13 @@
 - ansible.builtin.include_tasks: "install-{{ ansible_os_family }}.yml"
 
 - name: Create mosquitto_extra_groups
-  group:
+  ansible.builtin.group:
     name: "{{ item.name }}"
     state: present
   with_items: "{{ mosquitto_extra_groups }}"
 
 - name: Add mosquitto_user to mosquitto_extra_groups
-  user:
+  ansible.builtin.user:
     name: "{{ mosquitto_user }}"
     append: yes
     groups: "{{ item.name }}"

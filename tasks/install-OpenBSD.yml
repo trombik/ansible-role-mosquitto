@@ -1,12 +1,12 @@
 ---
 
 - name: Install mosquitto
-  openbsd_pkg:
+  community.general.openbsd_pkg:
     name: "{{ mosquitto_package }}"
     state: present
 
 - name: Install or uninstall mosquitto_extra_packages
-  openbsd_pkg:
+  community.general.openbsd_pkg:
     name: "{{ item.name }}"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ mosquitto_extra_packages }}"

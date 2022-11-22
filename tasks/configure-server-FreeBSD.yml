@@ -1,13 +1,13 @@
 ---
 
 - name: Create rc.conf.d
-  file:
+  ansible.builtin.file:
     path: /etc/rc.conf.d
     mode: 0755
     state: directory
 
 - name: Create rc.conf fragment
-  template:
+  ansible.builtin.template:
     src: mosquitto_rcd.j2
     dest: "/etc/rc.conf.d/{{ mosquitto_package }}"
     validate: sh -n %s
