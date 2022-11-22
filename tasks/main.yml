@@ -9,7 +9,7 @@
     - ansible_os_family == 'Debian'
     - ansible_distribution != 'Debian'
 
-- include: "install-{{ ansible_os_family }}.yml"
+- ansible.builtin.include_tasks: "install-{{ ansible_os_family }}.yml"
 
 - name: Create mosquitto_extra_groups
   group:
@@ -26,14 +26,14 @@
   notify:
     - Restart mosquitto
 
-- include: "configure-server-{{ ansible_os_family }}.yml"
+- ansible.builtin.include_tasks: "configure-server-{{ ansible_os_family }}.yml"
   when:
     - mosquitto_server
 
-- include: "server.yml"
+- ansible.builtin.include_tasks: "server.yml"
   when:
     - mosquitto_server
 
-- include: "client.yml"
+- ansible.builtin.include_tasks: "client.yml"
   when:
     - not mosquitto_server
