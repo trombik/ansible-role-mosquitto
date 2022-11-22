@@ -9,4 +9,4 @@
   community.general.openbsd_pkg:
     name: "{{ item.name }}"
     state: "{{ item.state | default('present') }}"
-  with_items: "{{ mosquitto_extra_packages }}"
+  loop: "{{ mosquitto_extra_packages }}"

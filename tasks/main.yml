@@ -15,14 +15,14 @@
   ansible.builtin.group:
     name: "{{ item.name }}"
     state: present
-  with_items: "{{ mosquitto_extra_groups }}"
+  loop: "{{ mosquitto_extra_groups }}"
 
 - name: Add mosquitto_user to mosquitto_extra_groups
   ansible.builtin.user:
     name: "{{ mosquitto_user }}"
     append: yes
     groups: "{{ item.name }}"
-  with_items: "{{ mosquitto_extra_groups }}"
+  loop: "{{ mosquitto_extra_groups }}"
   notify:
     - Restart mosquitto
 

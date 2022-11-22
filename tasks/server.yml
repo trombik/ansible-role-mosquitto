@@ -33,7 +33,7 @@
     dest: "{{ item['path'] }}"
   when:
     - "item['state'] == 'present'"
-  with_items: "{{ mosquitto_acl_files }}"
+  loop: "{{ mosquitto_acl_files }}"
   notify: Reload mosquitto
 
 - name: Delete mosquitto_acl_files
@@ -42,7 +42,7 @@
     state: "{{ item['state'] }}"
   when:
     - "item['state'] == 'absent'"
-  with_items: "{{ mosquitto_acl_files }}"
+  loop: "{{ mosquitto_acl_files }}"
   notify: Reload mosquitto
 
 - name: Create mosquitto_accounts
