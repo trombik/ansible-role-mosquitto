@@ -22,9 +22,9 @@ provisioner:
     - extra_roles
 
 platforms:
-  - name: freebsd-12.2-amd64
+  - name: freebsd-12.4-amd64
     driver:
-      box: trombik/ansible-freebsd-12.2-amd64
+      box: trombik/ansible-freebsd-12.4-amd64
       box_check_update: false
     driver_config:
       ssh:
@@ -33,9 +33,9 @@ platforms:
       extra_vars:
         ansible_python_interpreter: '/usr/local/bin/python3'
 
-  - name: freebsd-13.0-amd64
+  - name: freebsd-13.1-amd64
     driver:
-      box: trombik/ansible-freebsd-13.0-amd64
+      box: trombik/ansible-freebsd-13.1-amd64
       box_check_update: false
     driver_config:
       ssh:
@@ -44,9 +44,9 @@ platforms:
       extra_vars:
         ansible_python_interpreter: '/usr/local/bin/python3'
 
-  - name: openbsd-6.8-amd64
+  - name: openbsd-7.1-amd64
     driver:
-      box: trombik/ansible-openbsd-6.8-amd64
+      box: trombik/ansible-openbsd-7.1-amd64
       box_check_update: false
     driver_config:
       ssh:
@@ -55,9 +55,9 @@ platforms:
       extra_vars:
         ansible_python_interpreter: '/usr/local/bin/python3'
 
-  - name: openbsd-6.9-amd64
+  - name: openbsd-7.2-amd64
     driver:
-      box: trombik/ansible-openbsd-6.9-amd64
+      box: trombik/ansible-openbsd-7.2-amd64
       box_check_update: false
     driver_config:
       ssh:
@@ -65,20 +65,15 @@ platforms:
     provisioner:
       extra_vars:
         ansible_python_interpreter: '/usr/local/bin/python3'
-
-  - name: ubuntu-18.04-amd64
-    driver:
-      box: trombik/ansible-ubuntu-18.04-amd64
-      box_check_update: false
 
   - name: ubuntu-20.04-amd64
     driver:
       box: trombik/ansible-ubuntu-20.04-amd64
       box_check_update: false
 
-  - name: devuan-3-amd64
+  - name: devuan-4-amd64
     driver:
-      box: trombik/ansible-devuan-3-amd64
+      box: trombik/ansible-devuan-4-amd64
       box_check_update: false
 
   - name: centos-7.4-x86_64
