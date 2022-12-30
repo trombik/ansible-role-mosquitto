@@ -3,6 +3,7 @@
 - name: Install mosquitto
   apt:
     name: "{{ mosquitto_package }}"
+    policy_rc_d: 101
     state: present
   when:
     - mosquitto_server
