@@ -24,7 +24,7 @@ when "freebsd"
 when "ubuntu"
   group = "mosquitto"
 when "devuan"
-  pid_dir = "/var/run"
+  pid_dir = "/run/mosquitto"
 when "openbsd"
   user = "_mosquitto"
   group = "_mosquitto"
@@ -103,7 +103,7 @@ describe file(config) do
   it { should be_owned_by default_user }
   it { should be_grouped_into group }
   its(:content) { should match(/^user #{user}$/) }
-  its(:content) { should match(/^pid_file #{pid_file}$/) }
+  its(:content) { should match(/^pid_file #{pid_file}$/) } unless os[:family] == "devuan"
   its(:content) { should match(/^log_dest syslog$/) }
   its(:content) { should match(/^autosave_interval 1800$/) }
   its(:content) { should match(/^persistence true$/) }

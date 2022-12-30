@@ -1,2 +1,2 @@
 ---
-__mosquitto_pid_dir: /var/run
+__mosquitto_pid_dir: /run/mosquitto
