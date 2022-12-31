@@ -23,6 +23,7 @@ when "freebsd"
   ca_file = "/etc/ssl/cert.pem"
 when "ubuntu"
   group = "mosquitto"
+  pid_dir = "/run/mosquitto"
 when "devuan"
   pid_dir = "/run/mosquitto"
 when "openbsd"
@@ -103,7 +104,7 @@ describe file(config) do
   it { should be_owned_by default_user }
   it { should be_grouped_into group }
   its(:content) { should match(/^user #{user}$/) }
-  its(:content) { should match(/^pid_file #{pid_file}$/) } unless os[:family] == "devuan"
+  its(:content) { should match(/^pid_file #{pid_file}$/) } unless os[:family] == "devuan" || os[:family] == "ubuntu"
   its(:content) { should match(/^log_dest syslog$/) }
   its(:content) { should match(/^autosave_interval 1800$/) }
   its(:content) { should match(/^persistence true$/) }
@@ -132,9 +133,12 @@ if pid_dir != "/var/run"
   end
 end
 
-# XXX the init script in CentOS package runs the daemon without "-d" flag.
-# without it, the PID file is not written at all.
-if os[:family] != "redhat"
+case os[:family]
+when "redhat", "ubuntu"
+  # XXX the init script in CentOS package runs the daemon without "-d" flag.
+  # without it, the PID file is not written at all.
+  # XXX on Ubuntu, systemd internally manage process ID, no pid file at all
+else
   describe file(pid_file) do
     it { should exist }
     it { should be_file }
