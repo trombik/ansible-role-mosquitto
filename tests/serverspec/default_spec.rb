@@ -138,6 +138,7 @@ when "redhat", "ubuntu"
   # XXX the init script in CentOS package runs the daemon without "-d" flag.
   # without it, the PID file is not written at all.
   # XXX on Ubuntu, systemd internally manage process ID, no pid file at all
+  nil
 else
   describe file(pid_file) do
     it { should exist }
@@ -223,7 +224,6 @@ end
 %w[foo bar admin].each do |u|
   describe command "mosquitto_sub -h 10.0.2.15 -p 8883 -u #{Shellwords.escape(u)} -P password -t #{Shellwords.escape('$SYS/broker/clients/connected')} -C 1 --cafile #{Shellwords.escape(ca_file)} --insecure -d" do
     its(:exit_status) do
-
       # maybe related: https://github.com/eclipse/mosquitto/issues/2409
       pending "fails on OpenBSD with libressl" if os[:family] == "openbsd"
       should eq 0
