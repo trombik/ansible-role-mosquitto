@@ -1,12 +1,12 @@
 ---
 
 - name: Reload mosquitto
-  service:
+  ansible.builtin.service:
     name: "{{ mosquitto_service }}"
     state: reloaded
 
 - name: Restart mosquitto
-  service:
+  ansible.builtin.service:
     name: "{{ mosquitto_service }}"
     state: stopped
   notify:
@@ -15,21 +15,21 @@
     - Wait for mosquitto to listen in handler
 
 - name: Wait for mosquitto to stop listening in handler
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
     port: "{{ mosquitto_port }}"
     timeout: "{{ mosquitto_wait_for_timeout }}"
     state: stopped
 
 - name: Start mosquitto in handler
-  service:
+  ansible.builtin.service:
     name: "{{ mosquitto_service }}"
     state: started
 
 - name: Wait for mosquitto to listen in handler
   # XXX the server does not validate upon startup. even if the file is not
   # correct, it returns zero exit status.
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{% if mosquitto_bind_address | length > 0 %}{{ mosquitto_bind_address }}{% else %}localhost{% endif %}"
     port: "{{ mosquitto_port }}"
     timeout: "{{ mosquitto_wait_for_timeout }}"

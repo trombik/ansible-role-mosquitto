@@ -1,12 +1,12 @@
 ---
 
 - name: Install mosquitto
-  yum:
+  ansible.builtin.yum:
     name: "{{ mosquitto_package }}"
     state: present
 
 - name: Install or uninstall mosquitto_extra_packages
-  yum:
+  ansible.builtin.yum:
     name: "{{ item.name }}"
     state: "{{ item.state | default('present') }}"
-  with_items: "{{ mosquitto_extra_packages }}"
+  loop: "{{ mosquitto_extra_packages }}"
