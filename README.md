@@ -130,7 +130,7 @@ None
   roles:
     - name: trombik.redhat_repo
       when:
-        - ansible_os_family == 'RedHat'
+        - ansible_distribution == 'CentOS'
     - name: trombik.apt_repo
       when:
         - ansible_distribution == 'Ubuntu'
@@ -171,7 +171,11 @@ None
       user {{ mosquitto_user }}
       # XXX on Ubuntu, mosquitto_pid_file is hard-coded in the init script.
       # XXX on CentOS, the file is not written, and `pid_file` is ignored.
+      # XXX on Devuan mosquitto_pid_file is managed by start-stop-daemon, not
+      # mosquitto.
+      {% if ansible_os_family != 'Debian' %}
       pid_file {{ mosquitto_pid_file }}
+      {% endif %}
       log_dest syslog
       autosave_interval 1800
       persistence true
