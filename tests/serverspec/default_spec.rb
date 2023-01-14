@@ -23,8 +23,9 @@ when "freebsd"
   ca_file = "/etc/ssl/cert.pem"
 when "ubuntu"
   group = "mosquitto"
+  pid_dir = "/run/mosquitto"
 when "devuan"
-  pid_dir = "/var/run"
+  pid_dir = "/run/mosquitto"
 when "openbsd"
   user = "_mosquitto"
   group = "_mosquitto"
@@ -103,7 +104,7 @@ describe file(config) do
   it { should be_owned_by default_user }
   it { should be_grouped_into group }
   its(:content) { should match(/^user #{user}$/) }
-  its(:content) { should match(/^pid_file #{pid_file}$/) }
+  its(:content) { should match(/^pid_file #{pid_file}$/) } unless os[:family] == "devuan" || os[:family] == "ubuntu"
   its(:content) { should match(/^log_dest syslog$/) }
   its(:content) { should match(/^autosave_interval 1800$/) }
   its(:content) { should match(/^persistence true$/) }
@@ -132,9 +133,13 @@ if pid_dir != "/var/run"
   end
 end
 
-# XXX the init script in CentOS package runs the daemon without "-d" flag.
-# without it, the PID file is not written at all.
-if os[:family] != "redhat"
+case os[:family]
+when "redhat", "ubuntu"
+  # XXX the init script in CentOS package runs the daemon without "-d" flag.
+  # without it, the PID file is not written at all.
+  # XXX on Ubuntu, systemd internally manage process ID, no pid file at all
+  nil
+else
   describe file(pid_file) do
     it { should exist }
     it { should be_file }
@@ -174,7 +179,10 @@ end
 
 ports.each do |p|
   describe port(p) do
-    it { should be_listening }
+    it do
+      pending "port resource type on OpenBSD does not work" if os[:family] == "openbsd" && os[:release].to_f >= 7.2
+      should be_listening
+    end
   end
 end
 
@@ -189,7 +197,7 @@ end
 
 describe command "echo | openssl s_client -connect 10.0.2.15:1883 -tls1_2" do
   case os[:family]
-  when "ubuntu", "redhat", "devuan"
+  when "ubuntu", "redhat", "devuan", "fedora"
     its(:stderr) { should match(/write:errno=104/) }
   when "openbsd"
     its(:stderr) { should match(/read:errno=0/) }
@@ -215,8 +223,18 @@ end
 # authenticated users can read `$SYS/#`
 %w[foo bar admin].each do |u|
   describe command "mosquitto_sub -h 10.0.2.15 -p 8883 -u #{Shellwords.escape(u)} -P password -t #{Shellwords.escape('$SYS/broker/clients/connected')} -C 1 --cafile #{Shellwords.escape(ca_file)} --insecure -d" do
-    its(:exit_status) { should eq 0 }
-    its(:stderr) { should eq "" }
-    its(:stdout) { should match(/^\d+$/) }
+    its(:exit_status) do
+      # maybe related: https://github.com/eclipse/mosquitto/issues/2409
+      pending "fails on OpenBSD with libressl" if os[:family] == "openbsd"
+      should eq 0
+    end
+    its(:stderr) do
+      pending "fails on OpenBSD with libressl" if os[:family] == "openbsd"
+      should eq ""
+    end
+    its(:stdout) do
+      pending "fails on OpenBSD with libressl" if os[:family] == "openbsd"
+      should match(/^\d+$/)
+    end
   end
 end

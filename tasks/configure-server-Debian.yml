@@ -1,7 +1,7 @@
 ---
 
 - name: Create /etc/default/mosquitto
-  template:
+  ansible.builtin.template:
     src: Debian.default.j2
     dest: "/etc/default/{{ mosquitto_service }}"
   notify:
