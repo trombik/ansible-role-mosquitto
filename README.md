@@ -74,49 +74,61 @@ one that supports `reload`. The file is identical to one in
 
 ## Debian
 
-| Variable | Default |
-|----------|---------|
-| `__mosquitto_user` | `mosquitto` |
-| `__mosquitto_group` | `mosquitto` |
-| `__mosquitto_db_dir` | `/var/lib/mosquitto` |
-| `__mosquitto_conf_dir` | `/etc/mosquitto` |
-| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
+```text
+---
+__mosquitto_user: mosquitto
+__mosquitto_group: mosquitto
+__mosquitto_db_dir: "/var/lib/mosquitto"
+__mosquitto_conf_dir: "/etc/mosquitto"
+__mosquitto_pid_dir: "/run/mosquitto"
+```
 
 ## Devuan
 
-| Variable | Default |
-|----------|---------|
-| `__mosquitto_pid_dir` | `/var/run` |
+```text
+---
+__mosquitto_pid_dir: "/run/mosquitto"
+```
 
 ## FreeBSD
 
-| Variable | Default |
-|----------|---------|
-| `__mosquitto_user` | `nobody` |
-| `__mosquitto_group` | `nobody` |
-| `__mosquitto_db_dir` | `/var/db/mosquitto` |
-| `__mosquitto_conf_dir` | `/usr/local/etc/mosquitto` |
-| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
+```text
+---
+__mosquitto_user: nobody
+__mosquitto_group: nobody
+__mosquitto_db_dir: "/var/db/mosquitto"
+__mosquitto_conf_dir: "/usr/local/etc/mosquitto"
+__mosquitto_pid_dir: "/var/run/mosquitto"
+```
 
 ## OpenBSD
 
-| Variable | Default |
-|----------|---------|
-| `__mosquitto_user` | `_mosquitto` |
-| `__mosquitto_group` | `_mosquitto` |
-| `__mosquitto_db_dir` | `/var/db/mosquitto` |
-| `__mosquitto_conf_dir` | `/etc/mosquitto` |
-| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
+```text
+---
+__mosquitto_user: _mosquitto
+__mosquitto_group: _mosquitto
+__mosquitto_db_dir: "/var/db/mosquitto"
+__mosquitto_conf_dir: "/etc/mosquitto"
+__mosquitto_pid_dir: "/var/run/mosquitto"
+```
 
 ## RedHat
 
-| Variable | Default |
-|----------|---------|
-| `__mosquitto_user` | `mosquitto` |
-| `__mosquitto_group` | `mosquitto` |
-| `__mosquitto_db_dir` | `/var/lib/mosquitto` |
-| `__mosquitto_conf_dir` | `/etc/mosquitto` |
-| `__mosquitto_pid_dir` | `/var/run/mosquitto` |
+```text
+---
+__mosquitto_user: mosquitto
+__mosquitto_group: mosquitto
+__mosquitto_db_dir: "/var/lib/mosquitto"
+__mosquitto_conf_dir: "/etc/mosquitto"
+__mosquitto_pid_dir: "/var/run/mosquitto"
+```
+
+## Ubuntu
+
+```text
+---
+__mosquitto_pid_dir: "/run/mosquitto"
+```
 
 # Dependencies
 
