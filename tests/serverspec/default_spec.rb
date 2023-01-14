@@ -197,7 +197,7 @@ end
 
 describe command "echo | openssl s_client -connect 10.0.2.15:1883 -tls1_2" do
   case os[:family]
-  when "ubuntu", "redhat", "devuan"
+  when "ubuntu", "redhat", "devuan", "fedora"
     its(:stderr) { should match(/write:errno=104/) }
   when "openbsd"
     its(:stderr) { should match(/read:errno=0/) }
