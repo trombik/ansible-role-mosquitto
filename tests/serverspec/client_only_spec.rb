@@ -5,12 +5,7 @@ service = "mosquitto"
 ports = [1883]
 
 describe service(service) do
-  it do
-    # Cannot 'status' mosquitto. Set mosquitto_enable to YES in /etc/rc.conf or
-    # use 'onestatus' instead of 'status'.
-    pending "serverspec failes when the service is not enabled" if os[:family] == "freebsd"
-    should_not be_running
-  end
+  it { should_not be_running }
   it { should_not be_enabled }
 end
 
